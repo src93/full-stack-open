@@ -7,21 +7,20 @@ const Button = ({ onHandleClick, text }) => {
     <button onClick={onHandleClick}>{text}</button>
   )
 }
-const ContentButton = ({
-  handleBadButton,
-  handleNeutralButton,
-  handleGoodButton
-}) => {
-  return (
-    <div className='content-button'>
-      <Button onHandleClick={handleBadButton} text={'Bad'} />
-      <Button onHandleClick={handleNeutralButton} text={'Neutral'} />
-      <Button onHandleClick={handleGoodButton} text={'Good'} />
-    </div>
-  )
-}
 const SecondTitle = () => (<h2>Statistics</h2>)
 const Statistic = ({ result, category }) => (<p>{category} {result}</p>)
+const Statistics = ({ bad, neutral, good, all, average, positive }) => {
+  return (
+    <>
+      <Statistic category={'bad'} result={bad} />
+      <Statistic category={'neutral'} result={neutral} />
+      <Statistic category={'good'} result={good} />
+      <Statistic category={'all'} result={all} />
+      <Statistic category={'average'} result={average} />
+      <Statistic category={'positive'} result={positive} />
+    </>
+  )
+}
 
 function App() {
   const [bad, setBad] = useState(0)
@@ -30,8 +29,8 @@ function App() {
   const [allComentaries, setAllComentaries] = useState(0)
 
   const getAllComentaries = () => bad + neutral + good
-  const getAverage = () => (good * 1 + bad * -1) / allComentaries
-  const getAveragePositve = () => `${good / allComentaries * 100} %`
+  const getAverage = () => isNaN((good * 1 + bad * -1) / allComentaries) ? 0 : (good * 1 + bad * -1) / allComentaries
+  const getAveragePositve = () => isNaN(good / allComentaries * 100) ? '0 %' : `${good / allComentaries * 100} %`
   const handleOnClickBadButton = () => {
     setBad(bad + 1)
     setAllComentaries(allComentaries + 1)
@@ -54,12 +53,13 @@ function App() {
         <Button onHandleClick={handleOnClickGoodButton} text={'Good'} />
       </div>
       <SecondTitle />
-      <Statistic category={'bad'} result={bad} />
-      <Statistic category={'neutral'} result={neutral} />
-      <Statistic category={'good'} result={good} />
-      <Statistic category={'all'} result={getAllComentaries()} />
-      <Statistic category={'average'} result={getAverage()} />
-      <Statistic category={'positive'} result={getAveragePositve()} />
+      <Statistics
+        bad={bad}
+        neutral={neutral}
+        good={good}
+        all={getAllComentaries()}
+        average={getAverage()}
+        positive={getAveragePositve()} />
     </>
   )
 }
