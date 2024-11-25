@@ -1,90 +1,25 @@
 import { useState } from 'react'
-import './App.css'
 
-const Title = () => (<h2>Give feedback</h2>)
-const Button = ({ onHandleClick, text }) => {
-  return (
-    <button onClick={onHandleClick}>{text}</button>
-  )
-}
-const SecondTitle = () => (<h2>Statistics</h2>)
-const Statistic = ({ result, category }) => (<p>{category} {result}</p>)
-const Statistics = ({ bad, neutral, good, all, average, positive }) => {
-  const withCommentaries = (
-    <table>
-      <tbody>
-        <tr>
-          <td>bad</td>
-          <td>{bad}</td>
-        </tr>
-        <tr>
-          <td>neutral</td>
-          <td>{neutral}</td>
-        </tr>
-        <tr>
-          <td>good</td>
-          <td>{good}</td>
-        </tr>
-        <tr>
-          <td>all</td>
-          <td>{all}</td>
-        </tr>
-        <tr>
-          <td>average</td>
-          <td>{average}</td>
-        </tr>
-        <tr>
-          <td>positive</td>
-          <td>{positive}</td>
-        </tr>
-      </tbody>
-    </table>
-  )
-  const withoutCommentaries = (
-    <p>No feedback given</p>
-  )
-  return all ? withCommentaries : withoutCommentaries
-}
+const App = () => {
+  const anecdotes = [
+    'If it hurts, do it more often.',
+    'Adding manpower to a late software project makes it later!',
+    'The first 90 percent of the code accounts for the first 10 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.',
+    'Any fool can write code that a computer can understand. Good programmers write code that humans can understand.',
+    'Premature optimization is the root of all evil.',
+    'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.',
+    'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
+    'The only way to go fast, is to go well.'
+  ]
 
-function App() {
-  const [bad, setBad] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [good, setGood] = useState(0)
-  const [allComentaries, setAllComentaries] = useState(0)
-
-  const getAllComentaries = () => bad + neutral + good
-  const getAverage = () => isNaN((good * 1 + bad * -1) / allComentaries) ? 0 : (good * 1 + bad * -1) / allComentaries
-  const getAveragePositve = () => isNaN(good / allComentaries * 100) ? '0 %' : `${good / allComentaries * 100} %`
-  const handleOnClickBadButton = () => {
-    setBad(bad + 1)
-    setAllComentaries(allComentaries + 1)
-  }
-  const handleOnClickNeutralButton = () => {
-    setNeutral(neutral + 1)
-    setAllComentaries(allComentaries + 1)
-  }
-  const handleOnClickGoodButton = () => {
-    setGood(good + 1)
-    setAllComentaries(allComentaries + 1)
-  }
+  const [selected, setSelected] = useState(0)
+  const Button = () => <button onClick={() => setSelected(Math.floor(Math.random() * 8))}>Next anecdote</button>
 
   return (
-    <>
-      <Title />
-      <div className='content-button'>
-        <Button onHandleClick={handleOnClickBadButton} text={'Bad'} />
-        <Button onHandleClick={handleOnClickNeutralButton} text={'Neutral'} />
-        <Button onHandleClick={handleOnClickGoodButton} text={'Good'} />
-      </div>
-      <SecondTitle />
-      <Statistics
-        bad={bad}
-        neutral={neutral}
-        good={good}
-        all={getAllComentaries()}
-        average={getAverage()}
-        positive={getAveragePositve()} />
-    </>
+    <div>
+      <p>{anecdotes[selected]}</p>
+      <Button />
+    </div>
   )
 }
 
