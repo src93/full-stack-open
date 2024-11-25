@@ -10,7 +10,7 @@ const Button = ({ onHandleClick, text }) => {
 const SecondTitle = () => (<h2>Statistics</h2>)
 const Statistic = ({ result, category }) => (<p>{category} {result}</p>)
 const Statistics = ({ bad, neutral, good, all, average, positive }) => {
-  return (
+  const withCommentaries = (
     <>
       <Statistic category={'bad'} result={bad} />
       <Statistic category={'neutral'} result={neutral} />
@@ -20,6 +20,10 @@ const Statistics = ({ bad, neutral, good, all, average, positive }) => {
       <Statistic category={'positive'} result={positive} />
     </>
   )
+  const withoutCommentaries = (
+    <p>No feedback given</p>
+  )
+  return all ? withCommentaries : withoutCommentaries
 }
 
 function App() {
