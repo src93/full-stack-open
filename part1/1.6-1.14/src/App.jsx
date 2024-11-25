@@ -2,6 +2,16 @@ import { useState } from 'react'
 
 const Button = ({ handleClick, text }) => <button onClick={handleClick}>{text}</button>
 
+const AnecdoteWithMostVotes = ({anecdote, votes}) => {
+  return (
+    <>
+      <h1>Anecdote with most votes</h1>
+      <p>{anecdote}</p>
+      <p>Has {votes} votes</p>
+    </>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -21,13 +31,18 @@ const App = () => {
     points[selected] += 1
     setPoints([...points])
   }
+  const getAnecdoteWithMostVotes = () => points.reduce((acc, current, index) => {
+    return points[index] > acc.votes ? {index, votes: current} : acc
+  }, {index: 0, votes: 0})
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
       <p>Has {points[selected]} votes</p>
       <Button handleClick={handleClickVote} text={'Vote'} />
       <Button handleClick={handleClickNextAnecdote} text={'Next anecdote'} />
+      <AnecdoteWithMostVotes anecdote={anecdotes[getAnecdoteWithMostVotes().index]} votes={getAnecdoteWithMostVotes().votes} />
     </div>
   )
 }
