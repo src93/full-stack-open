@@ -11,14 +11,34 @@ const SecondTitle = () => (<h2>Statistics</h2>)
 const Statistic = ({ result, category }) => (<p>{category} {result}</p>)
 const Statistics = ({ bad, neutral, good, all, average, positive }) => {
   const withCommentaries = (
-    <>
-      <Statistic category={'bad'} result={bad} />
-      <Statistic category={'neutral'} result={neutral} />
-      <Statistic category={'good'} result={good} />
-      <Statistic category={'all'} result={all} />
-      <Statistic category={'average'} result={average} />
-      <Statistic category={'positive'} result={positive} />
-    </>
+    <table>
+      <tbody>
+        <tr>
+          <td>bad</td>
+          <td>{bad}</td>
+        </tr>
+        <tr>
+          <td>neutral</td>
+          <td>{neutral}</td>
+        </tr>
+        <tr>
+          <td>good</td>
+          <td>{good}</td>
+        </tr>
+        <tr>
+          <td>all</td>
+          <td>{all}</td>
+        </tr>
+        <tr>
+          <td>average</td>
+          <td>{average}</td>
+        </tr>
+        <tr>
+          <td>positive</td>
+          <td>{positive}</td>
+        </tr>
+      </tbody>
+    </table>
   )
   const withoutCommentaries = (
     <p>No feedback given</p>
