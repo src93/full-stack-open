@@ -1,11 +1,12 @@
 import { useState } from 'react'
 
-const FormNewName = ({ onHandleName, onHanldeSubmit, newName }) => {
+const FormNewName = ({ onHandleName, onHanldeSubmit, newName, onHandlePhone, newPhone }) => {
   return (
     <form onSubmit={onHanldeSubmit}>
       <div>
         name: <input value={newName} onChange={onHandleName} />
       </div>
+      <div>number: <input value={newPhone} onChange={onHandlePhone} /></div>
       <div>
         <button type="submit">add</button>
       </div>
@@ -15,27 +16,39 @@ const FormNewName = ({ onHandleName, onHanldeSubmit, newName }) => {
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { name: 'Arto Hellas', phone: '123123' }
   ])
   const [newName, setNewName] = useState('')
+  const [newPhone, setNewPhone] = useState('')
 
   const onHandleName = (ev) => setNewName(ev.target.value)
+  const onHandlePhone = (ev) => setNewPhone(ev.target.value)
   const onHanldeSubmit = (ev) => {
     ev.preventDefault()
     const isNameInvalid = persons.some(person => person.name === newName)
     if (isNameInvalid) {
       alert(`${newName} is already added to phonebook`)
     } else {
-      setPersons(persons.concat({name: newName}))
+      const newPerson = {
+        name: newName,
+        phone: newPhone
+      }
+      setPersons(persons.concat(newPerson))
     }
     setNewName('')
+    setNewPhone('')
   }
-  const showNumbers = () => persons.map(person => <p key={person.name}>{person.name}</p>)
+  const showNumbers = () => persons.map(person => <p key={person.name}>{person.name} {person.phone}</p>)
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <FormNewName onHandleName={onHandleName} onHanldeSubmit={onHanldeSubmit} newName={newName} />
+      <FormNewName
+        onHandleName={onHandleName}
+        onHanldeSubmit={onHanldeSubmit}
+        onHandlePhone={onHandlePhone}
+        newName={newName}
+        newPhone={newPhone} />
       <h2>Numbers</h2>
       {showNumbers()}
     </div>
