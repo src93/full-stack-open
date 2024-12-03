@@ -20,8 +20,10 @@ const App = () => {
   ])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
+  const [filterName, setFilterName] = useState('')
 
   const onHandleName = (ev) => setNewName(ev.target.value)
+  const onHandleFilter = (ev) => setFilterName(ev.target.value)
   const onHandlePhone = (ev) => setNewPhone(ev.target.value)
   const onHanldeSubmit = (ev) => {
     ev.preventDefault()
@@ -38,11 +40,17 @@ const App = () => {
     setNewName('')
     setNewPhone('')
   }
-  const showNumbers = () => persons.map(person => <p key={person.name}>{person.name} {person.phone}</p>)
+  const showNumbers = () => persons.filter(
+    person => person.name.toLowerCase().includes(filterName.toLocaleLowerCase())
+  ).map(
+    person => <p key={person.name}>{person.name} {person.phone}</p>
+  )
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h2>phonebook</h2>
+      <input value={filterName} onChange={onHandleFilter} />
+      <h2>Add a new</h2>
       <FormNewName
         onHandleName={onHandleName}
         onHanldeSubmit={onHanldeSubmit}
