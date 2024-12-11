@@ -18,8 +18,14 @@ const updatePerson = async (updatePerson) => {
   return response.data
 }
 
+const deletePerson = async (id) => {
+  const response = await axios.delete(`${baseUrl}/${id}`)
+  return response.data
+}
+
 export {
   getAllPersons,
   createPerson,
-  updatePerson
+  updatePerson,
+  deletePerson
 }

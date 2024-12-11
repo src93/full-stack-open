@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { FilterPerson } from './components/filterPerson/filterPerson'
 import { FormNewPerson } from './components/formNewPerson/formNewPerson'
 import { ListPerson } from './components/listPerson/listPerson'
-import { getAllPersons, createPerson, updatePerson } from './services/person'
+import { getAllPersons, createPerson, updatePerson, deletePerson } from './services/person'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -41,6 +41,19 @@ const App = () => {
     setNewName('')
     setNewPhone('')
   }
+  const onHandleDelete = ({id, name}) => {
+    return () => {
+      const canDeletePerson = window.confirm(`delte ${name}?`);
+      if (canDeletePerson) {
+        deletePerson(id)
+          .then((response) => {
+            console.log('respuesta', response);
+            const newListPersons = persons.filter(person => person.id !== id)
+            setPersons(newListPersons)
+          })
+      }
+    }
+  }
 
   return (
     <div>
@@ -51,7 +64,11 @@ const App = () => {
         onHandlePhone={onHandlePhone}
         newName={newName}
         newPhone={newPhone} />
-      <ListPerson persons={persons} filter={filterName} />
+      <ListPerson
+        persons={persons}
+        filter={filterName}
+        onHandleDelete={onHandleDelete}
+        />
     </div>
   )
 }

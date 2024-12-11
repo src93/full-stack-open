@@ -2,7 +2,10 @@ const FilterPerson = ({filter, onHandleSetFilter}) => {
   return (
     <>
       <h2>phonebook</h2>
-      <input value={filter} onChange={onHandleSetFilter} />
+      <span>
+        Filter shown with
+        <input value={filter} onChange={onHandleSetFilter} />
+      </span>
     </>
   )
 }
