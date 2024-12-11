@@ -20,21 +20,14 @@ const App = () => {
   const onHandlePhone = (ev) => setNewPhone(ev.target.value)
   const onHanldeSubmit = (ev) => {
     ev.preventDefault()
-    if (ensureIsNameInvalid()) {
-      alert(`${newName} is already added to phonebook`)
-      return
+    if (ensureIsNameDuplicated()) {
+      handleNameDuplicated()
+    } else {
+      handleCreateNewPerson()
     }
-    const newPerson = {
-      name: newName,
-      phone: newPhone
-    }
-    createPerson(newPerson)
-      .then(newPersonFromServer => {
-        setPersons(persons.concat(newPersonFromServer))
-      })
     cleanForm()
   }
-  const ensureIsNameInvalid = () => {
+  const ensureIsNameDuplicated = () => {
     return persons.some(person => person.name === newName)
   }
   const cleanForm = () => {
@@ -47,12 +40,33 @@ const App = () => {
       if (canDeletePerson) {
         deletePerson(id)
           .then((response) => {
-            console.log('respuesta', response);
-            const newListPersons = persons.filter(person => person.id !== id)
-            setPersons(newListPersons)
+            setPersons(persons.filter(person => person.id !== id))
           })
       }
     }
+  }
+  const handleCreateNewPerson = () => {
+    const newPerson = {
+      name: newName,
+      phone: newPhone
+    }
+    createPerson(newPerson)
+      .then(newPersonFromServer => {
+        setPersons(persons.concat(newPersonFromServer))
+      })
+  }
+  const handleNameDuplicated = () => {
+    const userWantChangeNumber = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one`)
+      if (userWantChangeNumber) {
+        const person = {...persons.find(person => person.name === newName)}
+        person.phone = newPhone
+        updatePerson(person)
+          .then(response => {
+            setPersons(persons.map(person => {
+              return person.id !== response.id ? person : response
+            }))
+          })
+      }
   }
 
   return (
