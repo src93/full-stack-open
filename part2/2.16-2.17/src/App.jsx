@@ -11,6 +11,7 @@ const App = () => {
   const [newPhone, setNewPhone] = useState('')
   const [filterName, setFilterName] = useState('')
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+  const [showErrorMessage, setShowErrorMessage] = useState(false)
   const [message, setMessage] = useState('')
 
   useEffect(() => {
@@ -20,9 +21,12 @@ const App = () => {
 
   useEffect(() => {
     if (showSuccessMessage) {
-      setTimeout(() => {setShowSuccessMessage(false)}, 5000)
+      setTimeout(() => setShowSuccessMessage(false), 5000)
     }
-  }, [showSuccessMessage])
+    if (showErrorMessage) {
+      setTimeout(() => setShowErrorMessage(false), 5000)
+    }
+  }, [showSuccessMessage, showErrorMessage])
 
   const onHandleName = (ev) => setNewName(ev.target.value)
   const onHandleSetFilter = (ev) => setFilterName(ev.target.value)
@@ -83,18 +87,31 @@ const App = () => {
             setShowSuccessMessage(true)
             setMessage(`Updated ${response.name}`)
           })
+          .catch(err => {
+            setShowErrorMessage(true)
+            setMessage(`Information of ${newName} has already been removed from server`)
+          })
       }
   }
 
   return (
     <div>
       <FilterPerson filter={filterName} onHandleSetFilter={onHandleSetFilter} />
-      {showSuccessMessage ?
+      {
+        showSuccessMessage ?
         (
-          <BannerInfo message={message} />
+          <BannerInfo message={message} type={'success'} />
         ) :
         ''
       }
+      {
+        showErrorMessage ?
+        (
+          <BannerInfo message={message} type={'error'} />
+        ) :
+        ''
+      }
+
       <FormNewPerson
         onHandleName={onHandleName}
         onHanldeSubmit={onHanldeSubmit}

@@ -10,3 +10,16 @@
 .success-message__text {
   color: #157A1E;
 }
+
+.error-message__content {
+  border-radius: 0.31rem;
+  border-color: red;
+  border-style: solid;
+  background-color: #D3D3D3;
+  padding: 0.625rem;
+  margin-top: 0.5rem;
+}
+
+.error-message__text {
+  color: red;
+}
