@@ -1,9 +1,16 @@
-export const ListCountries = ( {countries} ) => {
+import './listCountries.css'
+
+export const ListCountries = ( {countries, handleShowButton} ) => {
   return (
-    <ul>
-      {countries.map(country => (
-        <li key={country.name.common}>{country.name.common}</li>
-      ))}
+    <ul className='listCountries'>
+      {countries.map(country => {
+        return (
+          <>
+            <li key={country.name.common}>{country.name.common}</li>
+            <button onClick={handleShowButton(country)}>show</button>
+          </>
+        )
+      })}
     </ul>
   )
 }

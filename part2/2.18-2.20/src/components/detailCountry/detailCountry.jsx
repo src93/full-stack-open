@@ -1,6 +1,7 @@
 import './detailCountry.css'
+import { WeatherDetail } from '../weather/weather'
 
-export const DetailCountry = ({ country }) => {
+export const DetailCountry = ({ country, weather }) => {
   return (
     <>
       <h1>{country.name.common}</h1>
@@ -13,6 +14,7 @@ export const DetailCountry = ({ country }) => {
         ))}
       </ul>
       <img className="flag" src={country.flags.svg} />
+      <WeatherDetail weather={weather} nameCountry={country.name.common} />
     </>
   )
 }
