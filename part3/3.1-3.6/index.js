@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 const persons = [
   {
     "id": 1,
@@ -24,11 +26,11 @@ const persons = [
   }
 ]
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (response, request) => {
   response.json(persons)
 })
 
-app.get('/api/persons/:id', (response, request) => {
+app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   const person = persons.find(item => item.id === id)
 
