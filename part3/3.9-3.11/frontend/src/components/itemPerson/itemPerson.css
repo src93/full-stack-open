@@ -1,0 +1,11 @@
+.contentItem {
+  display: flex;
+}
+
+button {
+  margin-left: 0.5rem;
+}
+
+p {
+  margin: 0.5rem 0;
+}
