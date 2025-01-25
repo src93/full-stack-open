@@ -57,10 +57,18 @@ app.delete('/api/persons/:id', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
   const { body } = request
+  const ensureIsNotValidBody = body ? !body.name || !body.number : true
+  const isNameExist = body ? persons.some(item => item.name === body.name) : false
 
-  if (!body.name || !body.number) {
+  if (ensureIsNotValidBody) {
     return response.status(400).json({
       error: 'name or number is missing'
+    })
+  }
+
+  if (isNameExist) {
+    return response.status(400).json({
+      error: 'name must be unique'
     })
   }
 
