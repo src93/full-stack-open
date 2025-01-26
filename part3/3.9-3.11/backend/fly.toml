@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for backend-long-flower-7382 on 2025-01-26T12:11:36+01:00
+# fly.toml app configuration file generated for backend-young-paper-2881 on 2025-01-26T12:50:56+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'backend-long-flower-7382'
+app = 'backend-young-paper-2881'
 primary_region = 'mad'
 
 [build]
