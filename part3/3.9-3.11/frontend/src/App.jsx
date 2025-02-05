@@ -8,7 +8,7 @@ import { getAllPersons, createPerson, updatePerson, deletePerson } from './servi
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
+  const [newPhone, setNewPhone] = useState('')
   const [filterName, setFilterName] = useState('')
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [showErrorMessage, setShowErrorMessage] = useState(false)
@@ -30,7 +30,7 @@ const App = () => {
 
   const onHandleName = (ev) => setNewName(ev.target.value)
   const onHandleSetFilter = (ev) => setFilterName(ev.target.value)
-  const onHandleNumber = (ev) => setNewNumber(ev.target.value)
+  const onHandlePhone = (ev) => setNewPhone(ev.target.value)
   const onHanldeSubmit = (ev) => {
     ev.preventDefault()
     if (ensureIsInvalidForm()) {
@@ -43,13 +43,13 @@ const App = () => {
     }
     cleanForm()
   }
-  const ensureIsInvalidForm = () => !newName || !newNumber
+  const ensureIsInvalidForm = () => !newName || !newPhone
   const ensureIsNameDuplicated = () => {
     return persons.some(person => person.name === newName)
   }
   const cleanForm = () => {
     setNewName('')
-    setNewNumber('')
+    setNewPhone('')
   }
   const onHandleDelete = ({id, name}) => {
     return () => {
@@ -65,7 +65,7 @@ const App = () => {
   const handleCreateNewPerson = () => {
     const newPerson = {
       name: newName,
-      number: newNumber
+      phone: newPhone
     }
     createPerson(newPerson)
       .then(newPersonFromServer => {
@@ -75,10 +75,10 @@ const App = () => {
       })
   }
   const handleNameDuplicated = () => {
-    const userWantChangeNumber = window.confirm(`${newName} is already added to Numberbook, replace the old number with a new one`)
-      if (userWantChangeNumber) {
+    const userWantChangePhone = window.confirm(`${newName} is already added to Numberbook, replace the old phone with a new one`)
+      if (userWantChangePhone) {
         const person = {...persons.find(person => person.name === newName)}
-        person.number = newNumber
+        person.phone = newNPhone
         updatePerson(person)
           .then(response => {
             setPersons(persons.map(person => {
@@ -115,9 +115,9 @@ const App = () => {
       <FormNewPerson
         onHandleName={onHandleName}
         onHanldeSubmit={onHanldeSubmit}
-        onHandleNumber={onHandleNumber}
+        onHandlePhone={onHandlePhone}
         newName={newName}
-        newNumber={newNumber} />
+        newPhone={newPhone} />
       <ListPerson
         persons={persons}
         filter={filterName}
