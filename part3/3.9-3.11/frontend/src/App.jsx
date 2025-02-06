@@ -78,7 +78,7 @@ const App = () => {
     const userWantChangePhone = window.confirm(`${newName} is already added to Numberbook, replace the old phone with a new one`)
       if (userWantChangePhone) {
         const person = {...persons.find(person => person.name === newName)}
-        person.phone = newNPhone
+        person.phone = newPhone
         updatePerson(person)
           .then(response => {
             setPersons(persons.map(person => {
