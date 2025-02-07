@@ -52,9 +52,10 @@ app.get('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   const { id } = request.params
-
-  Person.findOneAndDelete({ id })
-    .then(() => {
+  console.log('id en el delete', id);
+  Person.findOneAndDelete({ _id: id })
+    .then((person) => {
+      console.log('person delete', person);
       response.status(204).end()
     })
     .catch(error => next(error))
