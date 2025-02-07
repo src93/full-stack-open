@@ -73,6 +73,10 @@ const App = () => {
         setShowSuccessMessage(true)
         setMessage(`Added ${newPersonFromServer.name}`)
       })
+      .catch(err => {
+        setShowErrorMessage(true)
+        setMessage(err.response.data.error)
+      })
   }
   const handleNameDuplicated = () => {
     const userWantChangePhone = window.confirm(`${newName} is already added to Numberbook, replace the old phone with a new one`)
