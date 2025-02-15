@@ -9,7 +9,20 @@ const totalLikes = (posts) => {
   }, 0);
 }
 
+const favoritePost = (posts) => {
+  if (posts.length === 0) return null;
+  const favorite = posts.reduce((acc, current) => {
+    return acc.likes > current.likes ? acc : current
+  }, posts[0]);
+  return {
+    title: favorite.title,
+    author: favorite.author,
+    likes: favorite.likes
+  }
+}
+
 module.exports = {
   dummy,
-  totalLikes
+  totalLikes,
+  favoritePost
 }
