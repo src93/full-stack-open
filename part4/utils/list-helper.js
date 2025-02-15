@@ -21,8 +21,32 @@ const favoritePost = (posts) => {
   }
 }
 
+const mostPost = (posts) => {
+  if (posts.length === 0) return null;
+  let name = '';
+  let maxPosts = 0;
+  const authorWithMostposts = {};
+  posts.forEach(post => {
+    if (authorWithMostposts[post.author]) {
+      authorWithMostposts[post.author] += 1;
+    } else {
+      authorWithMostposts[post.author] = 1;
+    }
+    if (authorWithMostposts[post.author] > maxPosts) {
+      name = post.author;
+      maxPosts = authorWithMostposts[post.author];
+    }
+  })
+
+  return {
+    author: name,
+    posts: maxPosts
+  }
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  favoritePost
+  favoritePost,
+  mostPost
 }

@@ -1,6 +1,7 @@
 const dummy = require('../utils/list-helper').dummy
 const totalLikes = require('../utils/list-helper').totalLikes
 const favoritePost = require('../utils/list-helper').favoritePost
+const mostPost = require('../utils/list-helper').mostPost
 
 const listWithOnePost = [
   {
@@ -108,6 +109,29 @@ describe('favorite post', () => {
       title: "Canonical string reduction",
       author: "Edsger W. Dijkstra",
       likes: 12,
+    })
+  })
+})
+
+describe('most post', () => {
+  test('of empty list is zero', () => {
+    const result = mostPost([]);
+    expect(result).toEqual(null);
+  })
+
+  test('When list has only one post equal the likes of that', () => {
+    const result = mostPost(listWithOnePost)
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      posts: 1,
+    })
+  })
+
+  test('of a bigger list is calculated right', () => {
+    const result = mostPost(posts)
+    expect(result).toEqual({
+      author: "Robert C. Martin",
+      posts: 3,
     })
   })
 })
