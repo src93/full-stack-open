@@ -10,4 +10,28 @@ router.get('/', async (request, response, next) => {
   }
 })
 
+router.post('/', async (request, response, next) => {
+  const { body } = request
+
+  if (!body) {
+    return response.status(400).json({
+      error: 'content missing'
+    })
+  }
+
+  const { title, author, url, likes } = body
+  const blog = new Blog({
+    title,
+    author,
+    url,
+    likes
+  })
+  try {
+    const savedBlog = await blog.save()
+    response.status(201).json(savedBlog)
+  } catch (error) {
+    next(error)
+  }
+})
+
 module.exports = router

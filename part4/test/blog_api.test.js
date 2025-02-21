@@ -32,6 +32,32 @@ describe('Blog API', () => {
     assert.ok(response.body[0].id)
     assert.ok(!response.body[0]._id)
   })
+
+  test('a valid post can be added', async () => {
+    const newBlog = {
+      title: 'new blog',
+      author: 'Austin',
+      url: 'http://www.austin.com',
+      likes: 0
+    }
+    const response = await api
+      .post('/api/blog')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const { body } = response
+    assert.deepStrictEqual(newBlog, {
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes
+    })
+
+    const blogAfterPost = await helper.postsInDB()
+    assert.strictEqual(blogAfterPost.length, helper.initialBlog.length + 1)
+    assert.ok(blogAfterPost.some(blog => blog.id === body.id))
+  })
 })
 
 after(async () => {
