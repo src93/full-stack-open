@@ -93,6 +93,14 @@ describe('Blog API', () => {
       .send(blogWithoutUrl)
       .expect(400)
   })
+
+  test('delete a post', async () => {
+    const blog = await helper.initialBlog
+    const { _id } = blog[0]
+    await api
+      .delete(`/api/blog/${_id}`)
+      .expect(204)
+  })
 })
 
 after(async () => {
