@@ -101,6 +101,23 @@ describe('Blog API', () => {
       .delete(`/api/blog/${_id}`)
       .expect(204)
   })
+
+  test('update a post', async () => {
+    const blog = helper.initialBlog
+    const { _id } = blog[0]
+    const newBlog = {
+      title: 'new blog',
+      author: 'oher author'
+    }
+    const response = await api
+      .put(`/api/blog/${_id}`)
+      .send(newBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+    const { body } = response
+    assert.strictEqual(body.title, newBlog.title)
+    assert.strictEqual(body.author, newBlog.author)
+  })
 })
 
 after(async () => {

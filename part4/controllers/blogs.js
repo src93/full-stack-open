@@ -36,10 +36,20 @@ router.post('/', async (request, response, next) => {
 
 router.delete('/:id', async (request, response, next) => {
   const { id } = request.params
-  console.log('id en el delete', request.params)
   try {
     await Blog.findByIdAndDelete(id)
     response.status(204).end()
+  } catch (error) {
+    next(error)
+  }
+})
+
+router.put('/:id', async (request, response, next) => {
+  const { body } = request
+  const { id } = request.params
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(id, body, { new: true, runValidators: true, context: 'query' })
+    response.json(updatedBlog)
   } catch (error) {
     next(error)
   }
