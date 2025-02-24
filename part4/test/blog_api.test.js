@@ -58,6 +58,21 @@ describe('Blog API', () => {
     assert.strictEqual(blogAfterPost.length, helper.initialBlog.length + 1)
     assert.ok(blogAfterPost.some(blog => blog.id === body.id))
   })
+
+  test('if likes is missing it will default to 0', async () => {
+    const newBlog = {
+      title: 'new blog',
+      author: 'Austin',
+      url: 'http://www.austin.com',
+    }
+    const response = await api
+      .post('/api/blog')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    const { body } = response
+    assert.strictEqual(body.likes, 0)
+  })
 })
 
 after(async () => {
