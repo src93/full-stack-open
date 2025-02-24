@@ -73,6 +73,26 @@ describe('Blog API', () => {
     const { body } = response
     assert.strictEqual(body.likes, 0)
   })
+
+  test('if title or url is missing it will return 400', async () => {
+    const blogWithoutTitle = {
+      author: 'Austin',
+      url: 'http://www.austin.com',
+    }
+    const blogWithoutUrl = {
+      title: 'new blog',
+      author: 'Austin',
+    }
+    await api
+      .post('/api/blog')
+      .send(blogWithoutTitle)
+      .expect(400)
+
+    await api
+      .post('/api/blog')
+      .send(blogWithoutUrl)
+      .expect(400)
+  })
 })
 
 after(async () => {
