@@ -8,29 +8,39 @@ const helper = require('./helper.test')
 
 const Blog = require('../models/blog')
 
-beforeEach(async () => {
-  await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlog)
-})
 
 describe('Blog API', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    await Blog.insertMany(helper.initialBlog)
+    console.log('Data is inserted')
+  })
+
   test('Blog are returned as json', async () => {
     await api
       .get('/api/blog')
       .expect(200)
       .expect('Content-Type', /application\/json/)
+    // assert.ok(true)
+    console.log('Blog are returned as json')
   })
 
   test('There are six post', async () => {
     const response = await api.get('/api/blog')
 
     assert.strictEqual(response.body.length, helper.initialBlog.length)
+    // assert.ok(true)
+    console.log('There are six post')
+    // expect(response.body).toHaveLength(helper.initialBlog.length)
   })
 
   test('the post has the param id and not _id', async () => {
     const response = await api.get('/api/blog')
     assert.ok(response.body[0].id)
     assert.ok(!response.body[0]._id)
+
+    // expect(response.body[0].id).toBeDefined()
+    // expect(response.body[0]._id).not.toBeDefined()
   })
 
   test('a valid post can be added', async () => {
@@ -71,6 +81,7 @@ describe('Blog API', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/)
     const { body } = response
+
     assert.strictEqual(body.likes, 0)
   })
 
@@ -115,11 +126,15 @@ describe('Blog API', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
     const { body } = response
+
     assert.strictEqual(body.title, newBlog.title)
     assert.strictEqual(body.author, newBlog.author)
   })
-})
 
-after(async () => {
-  await mongoose.connection.close()
+  after(async () => {
+    console.log('enter after')
+    await Blog.deleteMany({})
+    await mongoose.connection.close()
+    console.log('Data is deleted')
+  })
 })

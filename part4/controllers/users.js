@@ -21,6 +21,12 @@ router.post('/', async (request, response, next) => {
   }
 
   const { name, username, password } = body
+  const ensurePasswordIsNotValid = !password || password.length < 3
+  if (ensurePasswordIsNotValid) {
+    return response.status(400).json({
+      error: 'password must be at least 3 characters long'
+    })
+  }
   const saltRounds = 10
   const passwordHash = bcrypt.hashSync(password, saltRounds)
   const user = new User({
