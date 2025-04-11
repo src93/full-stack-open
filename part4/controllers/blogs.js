@@ -1,9 +1,10 @@
 const router = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 router.get('/', async (request, response, next) => {
   try {
-    const blog = await Blog.find({})
+    const blog = await Blog.find({}).populate('user')
     return response.json(blog)
   } catch (error) {
     next(error)
@@ -18,16 +19,19 @@ router.post('/', async (request, response, next) => {
       error: 'content missing'
     })
   }
-
+  const user = await User.findOne({})
   const { title, author, url, likes } = body
   const blog = new Blog({
     title,
     author,
     url,
-    likes
+    likes,
+    user: user.id
   })
   try {
     const savedBlog = await blog.save()
+    user.blogs = user.blogs.concat(savedBlog.id)
+    await user.save()
     response.status(201).json(savedBlog)
   } catch (error) {
     next(error)

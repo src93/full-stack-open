@@ -1,4 +1,4 @@
-const { test, after, beforeEach, describe } = require('node:test')
+const { test, after, before, describe } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -7,13 +7,15 @@ const api = supertest(app)
 const helper = require('./helper.test')
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 
 describe('Blog API', () => {
-  beforeEach(async () => {
+  before(async () => {
+    await User.deleteMany({})
     await Blog.deleteMany({})
-    await Blog.insertMany(helper.initialBlog)
-    console.log('Data is inserted')
+    await helper.initialBlog()
+    await helper.insertUser()
   })
 
   test('Blog are returned as json', async () => {
@@ -21,26 +23,18 @@ describe('Blog API', () => {
       .get('/api/blog')
       .expect(200)
       .expect('Content-Type', /application\/json/)
-    // assert.ok(true)
-    console.log('Blog are returned as json')
   })
 
-  test('There are six post', async () => {
+  test('There are three post', async () => {
     const response = await api.get('/api/blog')
 
-    assert.strictEqual(response.body.length, helper.initialBlog.length)
-    // assert.ok(true)
-    console.log('There are six post')
-    // expect(response.body).toHaveLength(helper.initialBlog.length)
+    assert.strictEqual(response.body.length, helper.initBlogs.length)
   })
 
   test('the post has the param id and not _id', async () => {
     const response = await api.get('/api/blog')
     assert.ok(response.body[0].id)
     assert.ok(!response.body[0]._id)
-
-    // expect(response.body[0].id).toBeDefined()
-    // expect(response.body[0]._id).not.toBeDefined()
   })
 
   test('a valid post can be added', async () => {
@@ -65,7 +59,7 @@ describe('Blog API', () => {
     })
 
     const blogAfterPost = await helper.postsInDB()
-    assert.strictEqual(blogAfterPost.length, helper.initialBlog.length + 1)
+    assert.strictEqual(blogAfterPost.length, helper.initBlogs.length + 1)
     assert.ok(blogAfterPost.some(blog => blog.id === body.id))
   })
 
@@ -106,22 +100,22 @@ describe('Blog API', () => {
   })
 
   test('delete a post', async () => {
-    const blog = await helper.initialBlog
-    const { _id } = blog[0]
+    const blog = await Blog.find({})
+    const { id } = blog[0]
     await api
-      .delete(`/api/blog/${_id}`)
+      .delete(`/api/blog/${id}`)
       .expect(204)
   })
 
   test('update a post', async () => {
-    const blog = helper.initialBlog
-    const { _id } = blog[0]
+    const blog = await Blog.find({})
+    const { id } = blog[0]
     const newBlog = {
       title: 'new blog',
       author: 'oher author'
     }
     const response = await api
-      .put(`/api/blog/${_id}`)
+      .put(`/api/blog/${id}`)
       .send(newBlog)
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -131,10 +125,28 @@ describe('Blog API', () => {
     assert.strictEqual(body.author, newBlog.author)
   })
 
+  test('a blog can be added by a user', async () => {
+    const newBlog = {
+      title: 'another blog',
+      author: 'Luis',
+      url: 'http://www.luis.com',
+      likes: 8
+    }
+    await api
+      .post('/api/blog')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+    const blogs = await api
+      .get('/api/blog')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+    const { body } = blogs
+    const blogSaved = body.find(blog => blog.title === newBlog.title)
+    assert.strictEqual(blogSaved.user.name, helper.initUser.name)
+  })
+
   after(async () => {
-    console.log('enter after')
-    await Blog.deleteMany({})
     await mongoose.connection.close()
-    console.log('Data is deleted')
   })
 })
