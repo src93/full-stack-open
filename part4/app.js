@@ -5,6 +5,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const routerUsers = require('./controllers/users')
 const routerBlog = require('./controllers/blogs')
+const routerLogin = require('./controllers/login')
 const middleware = require('./utils/middleware')
 const mongoose = require('mongoose')
 mongoose.set('strictQuery',false)
@@ -14,7 +15,7 @@ morgan.token('body', (request) => {
 })
 
 mongoose.connect(config.MONGODB_URI)
-  .then(response => {
+  .then(() => {
     console.log('connected to MongoDB')
   })
   .catch((error) => {
@@ -29,6 +30,7 @@ app.use(morgan(':method :url :response-time :status :body'))
 
 app.use('/api/user', routerUsers)
 app.use('/api/blog', routerBlog)
+app.use('/api/login', routerLogin)
 
 app.use(middleware.errorHandler)
 app.use(middleware.unknownEndpoint)
