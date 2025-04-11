@@ -55,8 +55,11 @@ describe('User API', () => {
 
   test('User create a blog', async() => {
     const blog = helper.initBlogs[0]
+    const { body: bodyUserLoged } = await loginUser()
+    const token = bodyUserLoged.token
     const response = await api
       .post('/api/blog')
+      .set('Authorization', `Bearer ${token}`)
       .send(blog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -75,3 +78,18 @@ describe('User API', () => {
     mongoose.connection.close()
   })
 })
+
+const loginUser = async () => {
+  const user = {
+    username: helper.initUser.username,
+    password: helper.initUser.password
+  }
+
+  const response = await api
+    .post('/api/login')
+    .send(user)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  return response
+}

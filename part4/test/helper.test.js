@@ -30,31 +30,22 @@ const initBlogs = [
 ]
 
 const insertUser = async () => {
-  console.log('entra en insertUser')
-  // const users = await User.find({})
-  // console.log('users', users)
   const saltRounds = 10
   const passwordHash = bcrypt.hashSync(initUser.password, saltRounds)
-  console.log('passwordHash', passwordHash)
   const userDB = new User({
     username: initUser.username,
     name: initUser.name,
     passwordHash
   })
-  console.log('userDB', userDB)
   try {
-    console.log('try')
     const response = await userDB.save()
-    console.log('sale en insertUser')
     return response.toJSON()
   } catch (error) {
-    console.log('error', error)
     return error
   }
 }
 
 const initialBlog = async () => {
-  console.log('entra en initialBlog')
   return await Blog.insertMany(initBlogs)
 }
 

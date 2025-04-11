@@ -6,27 +6,18 @@ const app = require('../app')
 const api = supertest(app)
 
 const User = require('../models/user')
+const Blog = require('../models/blog')
 const helper = require('./helper.test')
 
 describe('Login API', () => {
   before(async () => {
     await User.deleteMany({})
+    await Blog.deleteMany({})
     await helper.insertUser()
   })
 
   test('Login with valid credentials', async () => {
-    const user = {
-      username: helper.initUser.username,
-      password: helper.initUser.password
-    }
-
-    const response = await api
-      .post('/api/login')
-      .send(user)
-      .expect(200)
-      .expect('Content-Type', /application\/json/)
-
-    const { body } = response
+    const { body } = await loginUser()
     assert.ok(body.token)
     assert.strictEqual(body.username, helper.initUser.username)
     assert.strictEqual(body.name, helper.initUser.name)
@@ -52,3 +43,18 @@ describe('Login API', () => {
     mongoose.connection.close()
   })
 })
+
+const loginUser = async () => {
+  const user = {
+    username: helper.initUser.username,
+    password: helper.initUser.password
+  }
+
+  const response = await api
+    .post('/api/login')
+    .send(user)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  return response
+}

@@ -8,7 +8,6 @@
     "dev": "NODE_ENV=development nodemon index.js",
     "test-all": "NODE_ENV=test node --test",
     "test": "NODE_ENV=test node test/blog_api.test.js && node test/user_api.test.js && node test/login_api.test.js",
-    "test-jest": "NODE_ENV=test jest --verbose --runInBand",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
     "logs:prod": "fly logs",

@@ -9,6 +9,7 @@ const helper = require('./helper.test')
 const Blog = require('../models/blog')
 const User = require('../models/user')
 
+let token = null
 
 describe('Blog API', () => {
   before(async () => {
@@ -16,6 +17,8 @@ describe('Blog API', () => {
     await Blog.deleteMany({})
     await helper.initialBlog()
     await helper.insertUser()
+    const { body: bodyUserLoged } = await loginUser()
+    token = bodyUserLoged.token
   })
 
   test('Blog are returned as json', async () => {
@@ -46,6 +49,7 @@ describe('Blog API', () => {
     }
     const response = await api
       .post('/api/blog')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -71,6 +75,7 @@ describe('Blog API', () => {
     }
     const response = await api
       .post('/api/blog')
+      .set('Authorization', `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -90,11 +95,13 @@ describe('Blog API', () => {
     }
     await api
       .post('/api/blog')
+      .set('Authorization', `Bearer ${token}`)
       .send(blogWithoutTitle)
       .expect(400)
 
     await api
       .post('/api/blog')
+      .set('Authorization', `Bearer ${token}`)
       .send(blogWithoutUrl)
       .expect(400)
   })
@@ -126,27 +133,32 @@ describe('Blog API', () => {
   })
 
   test('a blog can be added by a user', async () => {
-    const newBlog = {
-      title: 'another blog',
-      author: 'Luis',
-      url: 'http://www.luis.com',
-      likes: 8
-    }
-    await api
-      .post('/api/blog')
-      .send(newBlog)
-      .expect(201)
-      .expect('Content-Type', /application\/json/)
     const blogs = await api
       .get('/api/blog')
       .expect(200)
       .expect('Content-Type', /application\/json/)
     const { body } = blogs
-    const blogSaved = body.find(blog => blog.title === newBlog.title)
-    assert.strictEqual(blogSaved.user.name, helper.initUser.name)
+    const blogSaved = body.find(blog => blog.author === 'Austin')
+    assert.ok(blogSaved)
+    assert.strictEqual(blogSaved.user.username, helper.initUser.username)
   })
 
   after(async () => {
     await mongoose.connection.close()
   })
 })
+
+const loginUser = async () => {
+  const user = {
+    username: helper.initUser.username,
+    password: helper.initUser.password
+  }
+
+  const response = await api
+    .post('/api/login')
+    .send(user)
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  return response
+}
