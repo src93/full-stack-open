@@ -17,7 +17,7 @@ describe('Login API', () => {
   })
 
   test('Login with valid credentials', async () => {
-    const { body } = await loginUser()
+    const { body } = await helper.loginUser(api)
     assert.ok(body.token)
     assert.strictEqual(body.username, helper.initUser.username)
     assert.strictEqual(body.name, helper.initUser.name)
@@ -43,18 +43,3 @@ describe('Login API', () => {
     mongoose.connection.close()
   })
 })
-
-const loginUser = async () => {
-  const user = {
-    username: helper.initUser.username,
-    password: helper.initUser.password
-  }
-
-  const response = await api
-    .post('/api/login')
-    .send(user)
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-
-  return response
-}

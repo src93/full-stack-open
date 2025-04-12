@@ -17,7 +17,7 @@ describe('Blog API', () => {
     await Blog.deleteMany({})
     await helper.initialBlog()
     await helper.insertUser()
-    const { body: bodyUserLoged } = await loginUser()
+    const { body: bodyUserLoged } = await helper.loginUser(api)
     token = bodyUserLoged.token
   })
 
@@ -156,18 +156,3 @@ describe('Blog API', () => {
     await mongoose.connection.close()
   })
 })
-
-const loginUser = async () => {
-  const user = {
-    username: helper.initUser.username,
-    password: helper.initUser.password
-  }
-
-  const response = await api
-    .post('/api/login')
-    .send(user)
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-
-  return response
-}
