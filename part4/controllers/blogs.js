@@ -1,7 +1,6 @@
 const router = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
-const jwt = require('jsonwebtoken')
 
 router.get('/', async (request, response, next) => {
   try {
@@ -20,23 +19,8 @@ router.post('/', async (request, response, next) => {
       error: 'content missing'
     })
   }
-  const token = request.token
-  let decodedToken
-  try {
-    decodedToken = jwt.verify(token, process.env.SECRET)
-    if (!decodedToken.id) {
-      return response.status(401).json({
-        error: 'token missing or invalid'
-      })
-    }
-  } catch (error) {
-    console.error('Error verifying token:', error)
-    return response.status(401).json({
-      error: 'token invalid'
-    })
-  }
 
-  const user = await User.findOne({ username: decodedToken.username })
+  const user = await User.findById(request.userId)
   const { title, author, url, likes } = body
   const blog = new Blog({
     title,
@@ -57,24 +41,8 @@ router.post('/', async (request, response, next) => {
 
 router.delete('/:id', async (request, response, next) => {
   const { id } = request.params
-  const token = request.token
-  let decodedToken
-  try {
-    decodedToken = jwt.verify(token, process.env.SECRET)
-    if (!decodedToken.id) {
-      return response.status(401).json({
-        error: 'token missing or invalid'
-      })
-    }
-  } catch (error) {
-    console.error('Error verifying token:', error)
-    return response.status(401).json({
-      error: 'token invalid'
-    })
-  }
   const blog = await Blog.findById(id)
-  console.log('id', decodedToken.id)
-  if (blog.user.toString() !== decodedToken.id) {
+  if (blog.user.toString() !== request.userId) {
     return response.status(401).json({
       error: 'only the creator can delete this blog'
     })

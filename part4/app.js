@@ -28,6 +28,7 @@ app.use(express.json())
 app.use(morgan('tiny'))
 app.use(morgan(':method :url :response-time :status :body'))
 app.use(middleware.tokenExtractor)
+app.use(middleware.userExtractor)
 
 app.use('/api/user', routerUsers)
 app.use('/api/blog', routerBlog)
