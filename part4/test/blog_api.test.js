@@ -106,11 +106,20 @@ describe('Blog API', () => {
       .expect(400)
   })
 
-  test('delete a post', async () => {
-    const blog = await Blog.find({})
-    const { id } = blog[0]
+  test('delete a post without token', async () => {
+    const blog = await Blog.findOne({ author: 'Austin' })
+    const { id } = blog
     await api
       .delete(`/api/blog/${id}`)
+      .expect(401)
+  })
+
+  test('delete a post', async () => {
+    const blog = await Blog.findOne({ author: 'Austin' })
+    const { id } = blog
+    await api
+      .delete(`/api/blog/${id}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(204)
   })
 
