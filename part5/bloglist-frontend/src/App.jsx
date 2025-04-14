@@ -4,15 +4,28 @@ import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      console.log('user', user.username);
+      setUser(user)
+    }
+  }, [])
+
+  const handleLogout = () => {
+    setUser(null)
+    window.localStorage.removeItem('loggedUser')
+  }
 
   return (
     <div>
       {
         !user ?
         <LoginForm setUser={setUser} /> :
-        <Blog blog={blogs} />
+        <Blog handleLogout={handleLogout} user={user} />
       }
     </div>
   )
