@@ -21,6 +21,11 @@ router.post('/', async (request, response, next) => {
   }
 
   const user = await User.findById(request.userId)
+  if (!user) {
+    return response.status(401).json({
+      error: 'token invalid'
+    })
+  }
   const { title, author, url, likes } = body
   const blog = new Blog({
     title,
