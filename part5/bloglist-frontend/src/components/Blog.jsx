@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Post from './Post'
+import Togglable from './Togglable'
+import FormNewPost from './FormNewPost'
 import blogService from '../services/blogs'
 import Notification from './Notification/Notification'
 
 const Blog = ({ user, handleLogout }) => {
   const [blog, setBlog] = useState([])
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [message, setMessage] = useState('')
   const [typeMessage, setTypeMessage] = useState('')
   const [showMessage, setShowMessage] = useState(false)
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -18,35 +18,34 @@ const Blog = ({ user, handleLogout }) => {
     )
   }, [])
 
-  const handleCreatePost = async (e) => {
-    e.preventDefault()
-    const newPost = {
-      title,
-      author,
-      url
-    }
+  const handleCreatePost = async (newPost) => {
     try {
       blogService.setToken(user.token)
       const response = await blogService.create(newPost)
       setBlog(blog.concat(response))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-      setTypeMessage('success')
-      setMessage(`A new blog ${response.title} by ${response.author} added`)
-      setShowMessage(true)
-      setTimeout(() => {
-        setShowMessage(false)
-      }, 5000)
+      blogFormRef.current.toggleVisibility()
+      showSuccessMessage(response)
     } catch (error) {
-      console.log('error creating post', error)
-      setTypeMessage('error')
-      setMessage('Error creating post')
-      setShowMessage(true)
-      setTimeout(() => {
-        setShowMessage(false)
-      }, 5000)
+      showErrorMessage()
     }
+  }
+
+  const showSuccessMessage = ({title, author}) => {
+    setTypeMessage('success')
+    setMessage(`A new blog ${title} by ${author} added`)
+    setShowMessage(true)
+    setTimeout(() => {
+      setShowMessage(false)
+    }, 5000)
+  }
+
+  const showErrorMessage = () => {
+    setTypeMessage('error')
+    setMessage('Error creating post')
+    setShowMessage(true)
+    setTimeout(() => {
+      setShowMessage(false)
+    }, 5000)
   }
 
   return (
@@ -55,31 +54,10 @@ const Blog = ({ user, handleLogout }) => {
       {showMessage && <Notification message={message} type={typeMessage} />}
       <p>{user.username} logged in</p>
       <button onClick={handleLogout}>Logout</button>
-      <h3>Create a new post</h3>
-      <form onSubmit={handleCreatePost}>
-        <input
-          type="text"
-          value={title}
-          name="Title"
-          placeholder="Título"
-          onChange={({ target }) => setTitle(target.value)} />
-        <br />
-        <input
-          type="text"
-          value={author}
-          name="Author"
-          placeholder="Autor"
-          onChange={({ target }) => setAuthor(target.value)} />
-        <br />
-        <input
-          type="text"
-          value={url}
-          name="Url"
-          placeholder="Url"
-          onChange={({ target }) => setUrl(target.value)} />
-        <br />
-        <button>Create</button>
-      </form>
+      <br />
+      <Togglable buttonLabel="Create new post" ref={blogFormRef}>
+        <FormNewPost createNewPost={handleCreatePost} />
+      </Togglable>
       {blog.map(post => (
         <Post key={post.id} post={post} />
       ))}
