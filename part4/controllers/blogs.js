@@ -63,8 +63,19 @@ router.delete('/:id', async (request, response, next) => {
 router.put('/:id', async (request, response, next) => {
   const { body } = request
   const { id } = request.params
+  const user = await User.findById(request.userId)
+  if (!user) {
+    return response.status(401).json({
+      error: 'token invalid'
+    })
+  }
   try {
-    const updatedBlog = await Blog.findByIdAndUpdate(id, body, { new: true, runValidators: true, context: 'query' })
+    const updatedBlog = await Blog.findByIdAndUpdate(id, body, { new: true, runValidators: true, context: 'query' }).populate('user')
+    if (!updatedBlog) {
+      return response.status(404).json({
+        error: 'blog not found'
+      })
+    }
     response.json(updatedBlog)
   } catch (error) {
     next(error)

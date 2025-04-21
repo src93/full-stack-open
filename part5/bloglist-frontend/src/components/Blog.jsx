@@ -24,24 +24,35 @@ const Blog = ({ user, handleLogout }) => {
       blogService.setToken(user.token)
       const response = await blogService.create(newPost)
       setBlog(blog.concat(response))
-      showSuccessMessage(response)
+      showSuccessMessage(`A new blog ${response.title} by ${response.author} added`)
     } catch (error) {
-      showErrorMessage()
+      showErrorMessage('Error creating post')
     }
   }
 
-  const showSuccessMessage = ({title, author}) => {
+  const handleUpdatePost = async (newPost) => {
+    try {
+      blogService.setToken(user.token)
+      const response = await blogService.update(newPost)
+      setBlog(blog.map(post => post.id !== newPost.id ? post : response))
+      showSuccessMessage(`title: ${response.title} by ${response.author} updated`)
+    } catch (error) {
+      showErrorMessage('Error updating post')
+    }
+  }
+
+  const showSuccessMessage = (message) => {
     setTypeMessage('success')
-    setMessage(`A new blog ${title} by ${author} added`)
+    setMessage(message)
     setShowMessage(true)
     setTimeout(() => {
       setShowMessage(false)
     }, 5000)
   }
 
-  const showErrorMessage = () => {
+  const showErrorMessage = (message) => {
     setTypeMessage('error')
-    setMessage('Error creating post')
+    setMessage(message)
     setShowMessage(true)
     setTimeout(() => {
       setShowMessage(false)
@@ -59,7 +70,7 @@ const Blog = ({ user, handleLogout }) => {
         <FormNewPost createNewPost={handleCreatePost} />
       </Togglable>
       {blog.map(post => (
-        <Post key={post.id} post={post} />
+        <Post key={post.id} post={post} updatePost={handleUpdatePost} />
       ))}
     </>
   )
