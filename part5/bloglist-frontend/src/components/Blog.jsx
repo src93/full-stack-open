@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import Post from './Post'
+import Post from './Post/Post'
 import Togglable from './Togglable'
 import FormNewPost from './FormNewPost'
 import blogService from '../services/blogs'
@@ -19,11 +19,11 @@ const Blog = ({ user, handleLogout }) => {
   }, [])
 
   const handleCreatePost = async (newPost) => {
+    blogFormRef.current.toggleVisibility()
     try {
       blogService.setToken(user.token)
       const response = await blogService.create(newPost)
       setBlog(blog.concat(response))
-      blogFormRef.current.toggleVisibility()
       showSuccessMessage(response)
     } catch (error) {
       showErrorMessage()
