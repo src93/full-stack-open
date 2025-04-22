@@ -5,9 +5,9 @@ import js from '@eslint/js'
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   js.configs.recommended,
-  { files: ['**/*.js']},
+  { files: ['**/*.js'] },
   { ignores: ['dist'] },
-  { languageOptions: { globals: {...globals.node, ...globals.jest}, sourceType: 'module' } },
+  { languageOptions: { globals: { ...globals.node, ...globals.jest }, sourceType: 'module' } },
   { plugins: { '@stylistic/js': stylisticJs }, rules: {
     '@stylistic/js/indent': [
       'error',

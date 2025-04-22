@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './Post.css'
+import PropTypes from 'prop-types'
 
 const Post = ({ post, updatePost, removePost }) => {
   const [showDetails, setShowDetails] = useState(false)
@@ -45,6 +46,12 @@ const Post = ({ post, updatePost, removePost }) => {
       {showDetails ? details() : ''}
     </div>
   )
+}
+
+Post.propTypes = {
+  post: PropTypes.object.isRequired,
+  updatePost: PropTypes.func.isRequired,
+  removePost: PropTypes.func.isRequired
 }
 
 export default Post
