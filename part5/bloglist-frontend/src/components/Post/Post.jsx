@@ -29,8 +29,8 @@ const Post = ({ post, updatePost, removePost }) => {
   const details = () => {
     return (
       <>
-        <p>{post.url}</p>
-        {post.likes} likes
+        <p data-testid="postUrl">{post.url}</p>
+        <span data-testid="postLikes">{post.likes} likes</span>
         <button onClick={handleLike}>like</button>
         <br />
         <p>{post.user.name}</p>
@@ -40,9 +40,13 @@ const Post = ({ post, updatePost, removePost }) => {
   }
 
   return (
-    <div className="post" data-testid="content-post">
+    <div className="post" data-testid="contentPost">
       <span data-testid="postTitle">{post.title}</span> by <span data-testid="postAuthor">{post.author}</span>
-      <button onClick={() => setShowDetails(!showDetails)}>{textButtonView}</button>
+      <button
+        data-testid="btnView"
+        onClick={() => setShowDetails(!showDetails)}>
+        {textButtonView}
+      </button>
       {showDetails ? details() : ''}
     </div>
   )

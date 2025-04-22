@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import Post from './Post'
-import { beforeEach, describe, expect } from 'vitest'
+import userEvent from '@testing-library/user-event'
 
 describe('Test Post component', () => {
   beforeEach(() => {
@@ -19,7 +19,7 @@ describe('Test Post component', () => {
   })
 
   test('renders content', () => {
-    const contentPost = screen.getByTestId('content-post')
+    const contentPost = screen.getByTestId('contentPost')
     expect(contentPost).toBeInTheDocument()
   })
 
@@ -28,5 +28,15 @@ describe('Test Post component', () => {
     const postAuthor = screen.getByTestId('postAuthor')
     expect(postTitle).toHaveTextContent('Test title')
     expect(postAuthor).toHaveTextContent('Test author')
+  })
+
+  test('renders url and likes when button is clicked', async () => {
+    const btnView = screen.getByTestId('btnView')
+    const user = userEvent.setup()
+    await user.click(btnView)
+    const postUrl = screen.getByTestId('postUrl')
+    const postLikes = screen.getByTestId('postLikes')
+    expect(postUrl).toHaveTextContent('http://test.com')
+    expect(postLikes).toHaveTextContent('0 likes')
   })
 })
