@@ -19,7 +19,7 @@ const FormNewPost = ({ createNewPost }) => {
   }
 
   return (
-    <>
+    <div data-testid="formNewPost">
       <h3>Create a new post</h3>
       <form onSubmit={handleCreatePost}>
         <input
@@ -27,6 +27,7 @@ const FormNewPost = ({ createNewPost }) => {
           value={title}
           name="Title"
           placeholder="Título"
+          data-testid="inputTitle"
           onChange={({ target }) => setTitle(target.value)} />
         <br />
         <input
@@ -34,6 +35,7 @@ const FormNewPost = ({ createNewPost }) => {
           value={author}
           name="Author"
           placeholder="Autor"
+          data-testid="inputAuthor"
           onChange={({ target }) => setAuthor(target.value)} />
         <br />
         <input
@@ -41,11 +43,12 @@ const FormNewPost = ({ createNewPost }) => {
           value={url}
           name="Url"
           placeholder="Url"
+          data-testid="inputUrl"
           onChange={({ target }) => setUrl(target.value)} />
         <br />
-        <button>Create</button>
+        <button data-testid="btnCreate">Create</button>
       </form>
-    </>
+    </div>
   )
 }
 

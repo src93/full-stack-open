@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Post from './Post/Post'
 import Togglable from './Togglable'
-import FormNewPost from './FormNewPost'
+import FormNewPost from './form-new-post/FormNewPost'
 import blogService from '../services/blogs'
 import Notification from './Notification/Notification'
 
