@@ -3,3 +3,11 @@
   padding: 0.5rem;
   margin-bottom: 1rem;
 }
+
+.btn-remove {
+  background-color: #ff0000;
+  color: white;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+}

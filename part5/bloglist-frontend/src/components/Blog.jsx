@@ -41,6 +41,17 @@ const Blog = ({ user, handleLogout }) => {
     }
   }
 
+  const handleRemovePost = async (id) => {
+    try {
+      blogService.setToken(user.token)
+      await blogService.remove(id)
+      setBlog(blog.filter(post => post.id !== id))
+      showSuccessMessage('Post deleted')
+    } catch (error) {
+      showErrorMessage('Error deleting post')
+    }
+  }
+
   const showSuccessMessage = (message) => {
     setTypeMessage('success')
     setMessage(message)
@@ -69,8 +80,8 @@ const Blog = ({ user, handleLogout }) => {
       <Togglable buttonLabel="Create new post" ref={blogFormRef}>
         <FormNewPost createNewPost={handleCreatePost} />
       </Togglable>
-      {blog.sort((a, b) => b.likes - a.likes ).map(post => (
-        <Post key={post.id} post={post} updatePost={handleUpdatePost} />
+      {blog.sort((a, b) => b.likes - a.likes).map(post => (
+        <Post key={post.id} post={post} updatePost={handleUpdatePost} removePost={handleRemovePost} />
       ))}
     </>
   )

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './Post.css'
 
-const Post = ({ post, updatePost }) => {
+const Post = ({ post, updatePost, removePost }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [textButtonView, setTextButtonView] = useState('view')
 
@@ -18,6 +18,13 @@ const Post = ({ post, updatePost }) => {
     updatePost(newPost)
   }
 
+  const handleRemove = async () => {
+    const userWantsRemove = window.confirm(`Are you sure you want to delete ${post.title} blog?`)
+    if (userWantsRemove) {
+      removePost(post.id)
+    }
+  }
+
   const details = () => {
     return (
       <>
@@ -26,6 +33,7 @@ const Post = ({ post, updatePost }) => {
         <button onClick={handleLike}>like</button>
         <br />
         <p>{post.user.name}</p>
+        <button className='btn-remove' onClick={handleRemove}>remove</button>
       </>
     )
   }

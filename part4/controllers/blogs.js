@@ -46,10 +46,10 @@ router.post('/', async (request, response, next) => {
 
 router.delete('/:id', async (request, response, next) => {
   const { id } = request.params
-  const blog = await Blog.findById(id)
-  if (blog.user.toString() !== request.userId) {
+  const user = await User.findById(request.userId)
+  if (!user) {
     return response.status(401).json({
-      error: 'only the creator can delete this blog'
+      error: 'token invalid'
     })
   }
   try {
