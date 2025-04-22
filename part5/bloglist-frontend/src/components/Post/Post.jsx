@@ -31,7 +31,11 @@ const Post = ({ post, updatePost, removePost }) => {
       <>
         <p data-testid="postUrl">{post.url}</p>
         <span data-testid="postLikes">{post.likes} likes</span>
-        <button onClick={handleLike}>like</button>
+        <button
+          data-testid="btnLikes"
+          onClick={handleLike}>
+          like
+        </button>
         <br />
         <p>{post.user.name}</p>
         <button className='btn-remove' onClick={handleRemove}>remove</button>

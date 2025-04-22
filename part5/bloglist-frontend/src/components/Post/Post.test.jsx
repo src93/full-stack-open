@@ -3,6 +3,7 @@ import Post from './Post'
 import userEvent from '@testing-library/user-event'
 
 describe('Test Post component', () => {
+  let mockerUpdatePost = vi.fn()
   beforeEach(() => {
     const post = {
       title: 'Test title',
@@ -15,7 +16,7 @@ describe('Test Post component', () => {
       }
     }
 
-    render(<Post post={post} updatePost={() => {}} removePost={() => {}} />)
+    render(<Post post={post} updatePost={mockerUpdatePost} removePost={() => {}} />)
   })
 
   test('renders content', () => {
@@ -38,5 +39,15 @@ describe('Test Post component', () => {
     const postLikes = screen.getByTestId('postLikes')
     expect(postUrl).toHaveTextContent('http://test.com')
     expect(postLikes).toHaveTextContent('0 likes')
+  })
+
+  test('clicks the like button twice', async () => {
+    const btnView = screen.getByTestId('btnView')
+    const user = userEvent.setup()
+    await user.click(btnView)
+    const btnUpdateLikes = screen.getByTestId('btnLikes')
+    await user.click(btnUpdateLikes)
+    await user.click(btnUpdateLikes)
+    expect(mockerUpdatePost.mock.calls).toHaveLength(2)
   })
 })
