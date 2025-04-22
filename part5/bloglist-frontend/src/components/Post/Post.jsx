@@ -40,8 +40,8 @@ const Post = ({ post, updatePost, removePost }) => {
   }
 
   return (
-    <div className="post">
-      {post.title}
+    <div className="post" data-testid="content-post">
+      <span data-testid="postTitle">{post.title}</span> by <span data-testid="postAuthor">{post.author}</span>
       <button onClick={() => setShowDetails(!showDetails)}>{textButtonView}</button>
       {showDetails ? details() : ''}
     </div>
