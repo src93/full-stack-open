@@ -69,7 +69,7 @@ const Blog = ({ user, handleLogout }) => {
       <Togglable buttonLabel="Create new post" ref={blogFormRef}>
         <FormNewPost createNewPost={handleCreatePost} />
       </Togglable>
-      {blog.map(post => (
+      {blog.sort((a, b) => b.likes - a.likes ).map(post => (
         <Post key={post.id} post={post} updatePost={handleUpdatePost} />
       ))}
     </>
