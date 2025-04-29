@@ -71,7 +71,7 @@ const Blog = ({ user, handleLogout }) => {
   }
 
   return (
-    <>
+    <div data-testid="blog">
       <h2>Blogs</h2>
       {showMessage && <Notification message={message} type={typeMessage} />}
       <p>{user.username} logged in</p>
@@ -83,7 +83,7 @@ const Blog = ({ user, handleLogout }) => {
       {blog.sort((a, b) => b.likes - a.likes).map(post => (
         <Post key={post.id} post={post} updatePost={handleUpdatePost} removePost={handleRemovePost} />
       ))}
-    </>
+    </div>
   )
 }
 
