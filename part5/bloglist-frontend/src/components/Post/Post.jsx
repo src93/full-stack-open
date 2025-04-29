@@ -38,7 +38,12 @@ const Post = ({ post, updatePost, removePost }) => {
         </button>
         <br />
         <p>{post.user.name}</p>
-        <button className='btn-remove' onClick={handleRemove}>remove</button>
+        <button
+          className="btn-remove"
+          data-testid="btnRemove"
+          onClick={handleRemove}>
+          remove
+        </button>
       </>
     )
   }

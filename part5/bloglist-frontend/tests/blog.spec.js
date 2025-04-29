@@ -105,6 +105,23 @@ test.describe('Blog app', () => {
           const postLikes = page.getByTestId('postLikes')
           await expect(postLikes).toHaveText('1 likes')
         })
+
+        test('It can be removed by the creator', async ({ page }) => {
+          page.on('dialog', async (dialog) => {
+            await dialog.accept()
+          })
+          const btnView = page.getByTestId('btnView')
+          await btnView.click()
+
+          const btnRemove = page.getByText('remove')
+          await btnRemove.click()
+
+          const newTitle = page.getByTestId('postTitle').getByText('Test title')
+          const newAuthor = page.getByTestId('postAuthor').getByText('Test author')
+
+          await expect(newTitle).not.toBeVisible()
+          await expect(newAuthor).not.toBeVisible()
+        })
       })
     })
   })
