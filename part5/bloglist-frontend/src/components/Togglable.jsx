@@ -9,7 +9,9 @@ const Togglable = forwardRef(({ buttonLabel, children }, refs) => {
 
   const contentDefault = () => {
     return (
-      <button onClick={toggleVisibility}>{buttonLabel}</button>
+      <button
+        data-testid="btnToggleShow"
+        onClick={toggleVisibility}>{buttonLabel}</button>
     )
   }
   const contentChildren = () => {

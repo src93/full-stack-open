@@ -66,5 +66,48 @@ test.describe('Blog app', () => {
 
       await expect(blog).not.toBeVisible()
     })
+
+    test.describe('When logged in', () => {
+      test.beforeEach(async ({ page }) => {
+        const usernameInput = page.getByTestId('loginUsername')
+        const passwordInput = page.getByTestId('loginPassword')
+        const loginButton = page.getByTestId('loginButton')
+
+        await usernameInput.fill('admin')
+        await passwordInput.fill('admin')
+        await loginButton.click()
+
+        const blog = page.getByTestId('blog')
+        await expect(blog).toBeVisible()
+      })
+
+      test('A blog can be created', async ({ page }) => {
+        const formNewPost = page.getByTestId('formNewPost')
+        const inputTitle = formNewPost.getByTestId('inputTitle')
+        const inputAuthor = formNewPost.getByTestId('inputAuthor')
+        const inputUrl = formNewPost.getByTestId('inputUrl')
+        const btnCreate = formNewPost.getByTestId('btnCreate')
+        const btnToggleShow = page.getByTestId('btnToggleShow')
+
+        await btnToggleShow.click()
+
+        await expect(formNewPost).toBeVisible()
+        await expect(inputTitle).toBeVisible()
+        await expect(inputAuthor).toBeVisible()
+        await expect(inputUrl).toBeVisible()
+        await expect(btnCreate).toBeVisible()
+
+        await inputTitle.fill('Test title')
+        await inputAuthor.fill('Test author')
+        await inputUrl.fill('http://test.com')
+        await btnCreate.click()
+
+        const newTitle = page.getByTestId('postTitle').getByText('Test title')
+        const newAuthor = page.getByTestId('postAuthor').getByText('Test author')
+
+        await expect(newTitle).toBeVisible()
+        await expect(newAuthor).toBeVisible()
+      })
+    })
   })
 })
