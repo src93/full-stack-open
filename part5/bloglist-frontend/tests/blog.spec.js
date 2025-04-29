@@ -3,7 +3,7 @@ import { spawn } from 'child_process'
 
 let frontendProcess
 
-test.beforeAll(() => {
+test.beforeAll(async () => {
   console.log('Starting frontend process...')
   frontendProcess = spawn('npm', ['run', 'dev'], {
     stdio: 'inherit',
@@ -82,25 +82,7 @@ test.describe('Blog app', () => {
       })
 
       test('A blog can be created', async ({ page }) => {
-        const formNewPost = page.getByTestId('formNewPost')
-        const inputTitle = formNewPost.getByTestId('inputTitle')
-        const inputAuthor = formNewPost.getByTestId('inputAuthor')
-        const inputUrl = formNewPost.getByTestId('inputUrl')
-        const btnCreate = formNewPost.getByTestId('btnCreate')
-        const btnToggleShow = page.getByTestId('btnToggleShow')
-
-        await btnToggleShow.click()
-
-        await expect(formNewPost).toBeVisible()
-        await expect(inputTitle).toBeVisible()
-        await expect(inputAuthor).toBeVisible()
-        await expect(inputUrl).toBeVisible()
-        await expect(btnCreate).toBeVisible()
-
-        await inputTitle.fill('Test title')
-        await inputAuthor.fill('Test author')
-        await inputUrl.fill('http://test.com')
-        await btnCreate.click()
+        createNewPost(page, 'Test title', 'Test author', 'http://test.com')
 
         const newTitle = page.getByTestId('postTitle').getByText('Test title')
         const newAuthor = page.getByTestId('postAuthor').getByText('Test author')
@@ -108,6 +90,37 @@ test.describe('Blog app', () => {
         await expect(newTitle).toBeVisible()
         await expect(newAuthor).toBeVisible()
       })
+
+      test.describe('When a blog exists', () => {
+        test.beforeEach(async ({ page }) => {
+          await createNewPost(page, 'Test title', 'Test author', 'http://test.com')
+        })
+
+        test('It can be liked', async ({ page }) => {
+          const btnView = page.getByTestId('btnView')
+          await btnView.click()
+
+          const btnLike = page.getByTestId('btnLikes')
+          await btnLike.click()
+          const postLikes = page.getByTestId('postLikes')
+          await expect(postLikes).toHaveText('1 likes')
+        })
+      })
     })
   })
 })
+
+const createNewPost = async (page, title, author, url) => {
+  const formNewPost = page.getByTestId('formNewPost')
+  const inputTitle = formNewPost.getByTestId('inputTitle')
+  const inputAuthor = formNewPost.getByTestId('inputAuthor')
+  const inputUrl = formNewPost.getByTestId('inputUrl')
+  const btnCreate = formNewPost.getByTestId('btnCreate')
+  const btnToggleShow = page.getByTestId('btnToggleShow')
+
+  await btnToggleShow.click()
+  await inputTitle.fill(title)
+  await inputAuthor.fill(author)
+  await inputUrl.fill(url)
+  await btnCreate.click()
+}
