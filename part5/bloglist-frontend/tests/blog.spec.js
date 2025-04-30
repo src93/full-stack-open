@@ -26,6 +26,13 @@ test.beforeEach(async ({ page, request }) => {
       password: 'admin'
     }
   })
+  await request.post('/api/user', {
+    data: {
+      username: 'user',
+      name: 'user',
+      password: 'user'
+    }
+  })
 })
 
 test.describe('Blog app', () => {
@@ -121,6 +128,28 @@ test.describe('Blog app', () => {
 
           await expect(newTitle).not.toBeVisible()
           await expect(newAuthor).not.toBeVisible()
+        })
+
+        test('It cannot be removed by another user', async ({ page }) => {
+          const btnLogout = page.getByTestId('btnLogout')
+          await btnLogout.click()
+
+          const usernameInput = page.getByTestId('loginUsername')
+          const passwordInput = page.getByTestId('loginPassword')
+          const loginButton = page.getByTestId('loginButton')
+
+          await usernameInput.fill('user')
+          await passwordInput.fill('user')
+          await loginButton.click()
+
+          const blog = page.getByTestId('blog')
+          await expect(blog).toBeVisible()
+
+          const btnView = page.getByTestId('btnView')
+          await btnView.click()
+
+          const btnRemove = page.getByText('remove')
+          await expect(btnRemove).not.toBeVisible()
         })
       })
     })

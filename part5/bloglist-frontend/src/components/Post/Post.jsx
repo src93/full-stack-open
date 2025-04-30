@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import './Post.css'
 import PropTypes from 'prop-types'
 
-const Post = ({ post, updatePost, removePost }) => {
+const Post = ({ post, updatePost, removePost, user }) => {
   const [showDetails, setShowDetails] = useState(false)
   const [textButtonView, setTextButtonView] = useState('view')
 
@@ -26,6 +26,10 @@ const Post = ({ post, updatePost, removePost }) => {
     }
   }
 
+  const canSeeDetails = () => {
+    return user.username === post?.user?.username
+  }
+
   const details = () => {
     return (
       <>
@@ -38,12 +42,16 @@ const Post = ({ post, updatePost, removePost }) => {
         </button>
         <br />
         <p>{post.user.name}</p>
-        <button
-          className="btn-remove"
-          data-testid="btnRemove"
-          onClick={handleRemove}>
-          remove
-        </button>
+        {
+          canSeeDetails() ?
+            <button
+              className="btn-remove"
+              data-testid="btnRemove"
+              onClick={handleRemove}>
+              remove
+            </button>
+            : ''
+        }
       </>
     )
   }

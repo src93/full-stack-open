@@ -19,7 +19,6 @@ router.post('/', async (request, response, next) => {
       error: 'content missing'
     })
   }
-
   const user = await User.findById(request.userId)
   if (!user) {
     return response.status(401).json({
@@ -36,7 +35,7 @@ router.post('/', async (request, response, next) => {
   })
   try {
     const savedBlog = await blog.save()
-    user.blogs = user.blogs.concat(savedBlog.id)
+    await savedBlog.populate('user')
     await user.save()
     response.status(201).json(savedBlog)
   } catch (error) {

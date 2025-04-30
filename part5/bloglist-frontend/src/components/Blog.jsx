@@ -75,13 +75,22 @@ const Blog = ({ user, handleLogout }) => {
       <h2>Blogs</h2>
       {showMessage && <Notification message={message} type={typeMessage} />}
       <p>{user.username} logged in</p>
-      <button onClick={handleLogout}>Logout</button>
+      <button
+        data-testid="btnLogout"
+        onClick={handleLogout}>
+        Logout
+      </button>
       <br />
       <Togglable buttonLabel="Create new post" ref={blogFormRef}>
         <FormNewPost createNewPost={handleCreatePost} />
       </Togglable>
       {blog.sort((a, b) => b.likes - a.likes).map(post => (
-        <Post key={post.id} post={post} updatePost={handleUpdatePost} removePost={handleRemovePost} />
+        <Post
+          key={post.id}
+          post={post}
+          user={user}
+          updatePost={handleUpdatePost}
+          removePost={handleRemovePost} />
       ))}
     </div>
   )
