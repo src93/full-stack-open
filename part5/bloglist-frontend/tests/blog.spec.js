@@ -101,6 +101,12 @@ test.describe('Blog app', () => {
       test.describe('When a blog exists', () => {
         test.beforeEach(async ({ page }) => {
           await createNewPost(page, 'Test title', 'Test author', 'http://test.com')
+
+          const newTitle = page.getByTestId('postTitle').getByText('Test title')
+          const newAuthor = page.getByTestId('postAuthor').getByText('Test author')
+
+          await expect(newTitle).toBeVisible()
+          await expect(newAuthor).toBeVisible()
         })
 
         test('It can be liked', async ({ page }) => {
@@ -150,6 +156,45 @@ test.describe('Blog app', () => {
 
           const btnRemove = page.getByText('remove')
           await expect(btnRemove).not.toBeVisible()
+        })
+
+        test.describe('When multiple blogs exist', () => {
+          test.beforeEach(async ({ page }) => {
+            await createNewPost(page, 'Test title 2', 'Test author 2', 'http://test2.com')
+            const newTitle = page.getByTestId('postTitle').getByText('Test title 2')
+            const newAuthor = page.getByTestId('postAuthor').getByText('Test author 2')
+
+            await expect(newTitle).toBeVisible()
+            await expect(newAuthor).toBeVisible()
+          })
+
+          test('They are ordered by likes', async ({ page }) => {
+            let btnView = page.getByTestId('contentPost').nth(0).getByTestId('btnView')
+            await btnView.click()
+            btnView = page.getByTestId('contentPost').nth(1).getByTestId('btnView')
+            await btnView.click()
+
+            let btnLike = page.getByTestId('contentPost').nth(1).getByTestId('btnLikes')
+            let postLikes = page.getByTestId('contentPost').nth(0).getByTestId('postLikes')
+            await btnLike.click()
+            await expect(postLikes).toHaveText('1 likes')
+
+            btnLike = page.getByTestId('contentPost').nth(0).getByTestId('btnLikes')
+            await btnLike.click()
+            await expect(postLikes).toHaveText('2 likes')
+
+            const firstPostLikes = page.getByTestId('contentPost').nth(0).getByTestId('postLikes')
+            const secondPostLikes = page.getByTestId('contentPost').nth(1).getByTestId('postLikes')
+
+            await expect(firstPostLikes).toHaveText('2 likes')
+            await expect(secondPostLikes).toHaveText('0 likes')
+
+            const firstPostTitle = await page.getByTestId('postTitle').nth(0).textContent()
+            const secondPostTitle = await page.getByTestId('postTitle').nth(1).textContent()
+
+            expect(firstPostTitle).toBe('Test title 2')
+            expect(secondPostTitle).toBe('Test title')
+          })
         })
       })
     })
