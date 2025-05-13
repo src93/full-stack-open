@@ -1,22 +1,34 @@
-import { useState } from 'react'
-import './App.css'
+import { useSelector, useDispatch } from 'react-redux'
+import { votedAnecdote } from './reducers/anecdoteReducer'
 
-function App({ store }) {
-  const handleStore = (type) => {
-    store.dispatch({
-      type
-    })
+const App = () => {
+  const anecdotes = useSelector(state => state)
+  const dispatch = useDispatch()
+
+  const vote = (id) => {
+    console.log('vote', id)
+    dispatch(votedAnecdote(id))
   }
 
   return (
     <div>
-      <button onClick={() => handleStore('GOOD')}>good</button> 
-      <button onClick={() => handleStore('OK')}>ok</button>
-      <button onClick={() => handleStore('BAD')}>bad</button>
-      <button onClick={() => handleStore('ZERO')}>reset stats</button>
-      <div>good {store.getState().good}</div>
-      <div>ok {store.getState().ok}</div>
-      <div>bad {store.getState().bad}</div>
+      <h2>Anecdotes</h2>
+      {anecdotes.map(anecdote =>
+        <div key={anecdote.id}>
+          <div>
+            {anecdote.content}
+          </div>
+          <div>
+            has {anecdote.votes}
+            <button onClick={() => vote(anecdote.id)}>vote</button>
+          </div>
+        </div>
+      )}
+      <h2>create new</h2>
+      <form>
+        <div><input /></div>
+        <button>create</button>
+      </form>
     </div>
   )
 }

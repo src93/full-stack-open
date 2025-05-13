@@ -1,21 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.jsx'
+import ReactDOM from 'react-dom/client'
 import { createStore } from 'redux'
-import reducer from './reducer.js'
+import { Provider } from 'react-redux'
+import App from './App'
+import reducer from './reducers/anecdoteReducer'
 
 const store = createStore(reducer)
 
-const root = createRoot(document.getElementById('root'))
-
-const renderApp = () => {
-  root.render(
-    <StrictMode>
-      <App store={store} />
-    </StrictMode>
-  )
-}
-
-renderApp()
-store.subscribe(renderApp)
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+)
