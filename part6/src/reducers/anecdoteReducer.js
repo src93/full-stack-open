@@ -1,18 +1,10 @@
-import { createSlice, current } from '@reduxjs/toolkit'
+import { createSlice, current, createAsyncThunk } from '@reduxjs/toolkit'
+import { getAnecdotes } from '../services/anecdotes'
 
-// const anecdotesAtStart = []
-
-// const getId = () => (100000 * Math.random()).toFixed(0)
-
-// const asObject = (anecdote) => {
-//   return {
-//     content: anecdote,
-//     id: getId(),
-//     votes: 0
-//   }
-// }
-
-// const initialState = anecdotesAtStart.map(asObject)
+// export const initializeAnecdotes = createAsyncThunk('anecdotes/getAll', async () => {
+//   const anecdotes = await getAnecdotes()
+//   return anecdotes
+// })
 
 const anecdoteSlice = createSlice({
   name: 'anecdotes',
@@ -36,7 +28,19 @@ const anecdoteSlice = createSlice({
       state.push(action.payload)
     }
   }
+  // extraReducers: (builder) => {
+  //   builder
+  //     .addCase(initializeAnecdotes.fulfilled, (state, action) => {
+  //       return action.payload
+  //     })
+  // }
 })
 
 export const { voteAnecdote, setAnecdotes, appendAnecdote } = anecdoteSlice.actions
+export const initializeAnecdotes = () => {
+  return async (dispatch) => {
+    const anecdotes = await getAnecdotes()
+    dispatch(setAnecdotes(anecdotes))
+  }
+}
 export default anecdoteSlice.reducer
