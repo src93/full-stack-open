@@ -3,11 +3,21 @@ import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/AnecdoteList'
 import AnecdoteFilter from './components/AnecdoteFilter'
 import { setMessage, setTimeoutId, clearNotification } from './reducers/notificationReducer'
+import { setAnecdotes } from './reducers/anecdoteReducer'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
+import { getAnecdotes } from './services/anecdotes'
 
 const App = () => {
   const dispatch = useDispatch()
+  useEffect(() => {
+    console.log('fetching anecdotes')
+    getAnecdotes()
+      .then(anecdotes => {
+        dispatch(setAnecdotes(anecdotes))
+      })
+  }, [dispatch])
   const notification = useSelector(state => state.notification)
   const handleNewAnecdote = (message) => {
     if (notification.timeoutId) {
