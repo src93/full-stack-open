@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Notification from './components/Notification'
 import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/AnecdoteList'
+import AnecdoteFilter from './components/AnecdoteFilter'
 
 const App = () => {
   const [showNotification, setShowNotification] = useState(false)
@@ -28,6 +29,7 @@ const App = () => {
     <div>
       <h2>Anecdotes</h2>
       {showNotification && <Notification notification={notification} />}
+      <AnecdoteFilter />
       <AnecdoteList handleNewAnecdote={handleNewAnecdote} />
       <AnecdoteForm handleSubmit={handleSubmit} />
     </div>
