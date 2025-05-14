@@ -7,7 +7,7 @@ const AnecdoteForm = ({ handleSubmit }) => {
     event.preventDefault()
     const content = event.target.newNote.value
     event.target.newNote.value = ''
-    dispatch(createAnecdote(content))
+    dispatch(createAnecdote({ content }))
     handleSubmit(content)
   }
 
