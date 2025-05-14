@@ -1,34 +1,41 @@
-import { useState } from 'react'
-
 import Notification from './components/Notification'
 import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/AnecdoteList'
 import AnecdoteFilter from './components/AnecdoteFilter'
+import { setMessage, setTimeoutId, clearNotification } from './reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 const App = () => {
-  const [showNotification, setShowNotification] = useState(false)
-  const [notification, setNotification] = useState('')
-
+  const dispatch = useDispatch()
+  const notification = useSelector(state => state.notification)
   const handleNewAnecdote = (message) => {
-    setNotification(message)
-    setShowNotification(true)
-    setTimeout(() => {
-      setShowNotification(false)
+    if (notification.timeoutId) {
+      dispatch(clearNotification())
+    }
+    dispatch(setMessage({ message }))
+    const timeoutId = setTimeout(() => {
+      dispatch(clearNotification())
     }, 5000)
+    dispatch(setTimeoutId({ timeoutId }))
   }
 
   const handleSubmit = (content) => {
-    setNotification(`you created '${content}'`)
-    setShowNotification(true)
-    setTimeout(() => {
-      setShowNotification(false)
+    const message = `you created '${content}'`
+    if (notification.timeoutId) {
+      dispatch(clearNotification())
+    }
+    dispatch(setMessage({ message }))
+    const timeoutId = setTimeout(() => {
+      dispatch(clearNotification())
     }, 5000)
+    dispatch(setTimeoutId({ timeoutId }))
   }
 
   return (
     <div>
       <h2>Anecdotes</h2>
-      {showNotification && <Notification notification={notification} />}
+      {notification.message && <Notification notification={notification} />}
       <AnecdoteFilter />
       <AnecdoteList handleNewAnecdote={handleNewAnecdote} />
       <AnecdoteForm handleSubmit={handleSubmit} />
