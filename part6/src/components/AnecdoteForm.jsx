@@ -1,6 +1,5 @@
-import { appendAnecdote } from '../reducers/anecdoteReducer'
+import { createAnecdoteAction } from '../reducers/anecdoteReducer'
 import { useDispatch } from 'react-redux'
-import { createAnecdote } from '../services/anecdotes'
 
 const AnecdoteForm = ({ handleSubmit }) => {
   const dispatch = useDispatch()
@@ -8,10 +7,7 @@ const AnecdoteForm = ({ handleSubmit }) => {
     event.preventDefault()
     const content = event.target.newNote.value
     event.target.newNote.value = ''
-    createAnecdote(content)
-      .then(anecdote => {
-        dispatch(appendAnecdote(anecdote))
-      })
+    dispatch(createAnecdoteAction(content))
     handleSubmit(content)
   }
 

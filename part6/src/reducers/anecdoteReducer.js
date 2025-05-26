@@ -1,5 +1,5 @@
 import { createSlice, current, createAsyncThunk } from '@reduxjs/toolkit'
-import { getAnecdotes } from '../services/anecdotes'
+import { getAnecdotes, createAnecdote } from '../services/anecdotes'
 
 // export const initializeAnecdotes = createAsyncThunk('anecdotes/getAll', async () => {
 //   const anecdotes = await getAnecdotes()
@@ -41,6 +41,12 @@ export const initializeAnecdotes = () => {
   return async (dispatch) => {
     const anecdotes = await getAnecdotes()
     dispatch(setAnecdotes(anecdotes))
+  }
+}
+export const createAnecdoteAction = (content) => {
+  return async (dispatch) => {
+    const newAnecdote = await createAnecdote(content)
+    dispatch(appendAnecdote(newAnecdote))
   }
 }
 export default anecdoteSlice.reducer
