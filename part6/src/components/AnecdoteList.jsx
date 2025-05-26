@@ -19,7 +19,6 @@ const AnecdoteList = ({ handleNewAnecdote }) => {
     }))
     handleNewAnecdote(`you voted '${anecdote.content}'`)
   }
-  console.log('anecdotes', anecdotes)
 
   return (
     [...anecdotes].sort((a, b) => b.votes - a.votes).map(anecdote =>

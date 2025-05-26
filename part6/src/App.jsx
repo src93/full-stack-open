@@ -2,7 +2,7 @@ import Notification from './components/Notification'
 import AnecdoteForm from './components/AnecdoteForm'
 import AnecdoteList from './components/AnecdoteList'
 import AnecdoteFilter from './components/AnecdoteFilter'
-import { setMessage, setTimeoutId, clearNotification } from './reducers/notificationReducer'
+import { setNotification, clearNotification } from './reducers/notificationReducer'
 import { useDispatch } from 'react-redux'
 import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
@@ -18,11 +18,7 @@ const App = () => {
     if (notification.timeoutId) {
       dispatch(clearNotification())
     }
-    dispatch(setMessage({ message }))
-    const timeoutId = setTimeout(() => {
-      dispatch(clearNotification())
-    }, 5000)
-    dispatch(setTimeoutId({ timeoutId }))
+    dispatch(setNotification(message, 5))
   }
 
   const handleSubmit = (content) => {
@@ -30,11 +26,7 @@ const App = () => {
     if (notification.timeoutId) {
       dispatch(clearNotification())
     }
-    dispatch(setMessage({ message }))
-    const timeoutId = setTimeout(() => {
-      dispatch(clearNotification())
-    }, 5000)
-    dispatch(setTimeoutId({ timeoutId }))
+    dispatch(setNotification(message, 5))
   }
 
   return (
