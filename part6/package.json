@@ -8,42 +8,24 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest --watchAll",
-    "server": "json-server -p3001 --watch db.json"
+    "server": "node server.js"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.8.1",
+    "@tanstack/react-query": "^5.77.2",
     "axios": "^1.9.0",
-    "prop-types": "^15.8.1",
+    "json-server": "^1.0.0-beta.3",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-redux": "^9.2.0"
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.27.1",
-    "@babel/preset-env": "^7.27.2",
-    "@babel/preset-react": "^7.27.1",
     "@eslint/js": "^9.25.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
-    "@types/jest": "^29.5.14",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
-    "@types/whatwg-fetch": "^0.0.33",
     "@vitejs/plugin-react": "^4.4.1",
-    "babel-jest": "^29.7.0",
-    "deep-freeze": "^0.0.1",
     "eslint": "^9.25.0",
-    "eslint-plugin-jest": "^28.11.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
-    "identity-obj-proxy": "^3.0.0",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "json-server": "^1.0.0-beta.3",
-    "vite": "^6.3.5",
-    "whatwg-fetch": "^3.6.20"
+    "vite": "^6.3.5"
   }
 }

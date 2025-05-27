@@ -1,41 +1,44 @@
-import Notification from './components/Notification'
 import AnecdoteForm from './components/AnecdoteForm'
-import AnecdoteList from './components/AnecdoteList'
-import AnecdoteFilter from './components/AnecdoteFilter'
-import { setNotification, clearNotification } from './reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
-import { useSelector } from 'react-redux'
-import { useEffect } from 'react'
-import { initializeAnecdotes } from './reducers/anecdoteReducer'
+import Notification from './components/Notification'
+import { useQuery } from '@tanstack/react-query'
+import { getAll } from './request/anecdotes/request'
 
 const App = () => {
-  const dispatch = useDispatch()
-  useEffect(() => {
-    dispatch(initializeAnecdotes())
-  }, [dispatch])
-  const notification = useSelector(state => state.notification)
-  const handleNewAnecdote = (message) => {
-    if (notification.timeoutId) {
-      dispatch(clearNotification())
-    }
-    dispatch(setNotification(message, 5))
+
+  const handleVote = (anecdote) => {
+    console.log('vote')
   }
 
-  const handleSubmit = (content) => {
-    const message = `you created '${content}'`
-    if (notification.timeoutId) {
-      dispatch(clearNotification())
-    }
-    dispatch(setNotification(message, 5))
+  const { isPending, isLoading, isError, data, error } = useQuery({
+    queryKey: ['anecdotes'],
+    queryFn: getAll,
+    retry: 1,
+  })
+
+  if (isLoading || isPending) {
+    return <div>loading data...</div>
+  }
+
+  if (isError) {
+    return <div>Error: {error.message}</div>
   }
 
   return (
     <div>
-      <h2>Anecdotes</h2>
-      {notification.message && <Notification notification={notification} />}
-      <AnecdoteFilter />
-      <AnecdoteList handleNewAnecdote={handleNewAnecdote} />
-      <AnecdoteForm handleSubmit={handleSubmit} />
+      <h3>Anecdote app</h3>
+      <Notification />
+      <AnecdoteForm />
+      {data.map(anecdote =>
+        <div key={anecdote.id}>
+          <div>
+            {anecdote.content}
+          </div>
+          <div>
+            has {anecdote.votes}
+            <button onClick={() => handleVote(anecdote)}>vote</button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
