@@ -1,8 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { create } from '../request/anecdotes/request'
+import { useCreateAnecdote } from '../customUse'
 
 const AnecdoteForm = () => {
   const queryClient = useQueryClient()
+  const dispatch = useCreateAnecdote()
   const { mutate: createAnecdote } = useMutation({
     mutationFn: create,
     onSuccess: () => {
@@ -20,6 +22,7 @@ const AnecdoteForm = () => {
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
     createAnecdote(content)
+    dispatch(content)
     console.log('new anecdote')
   }
 
