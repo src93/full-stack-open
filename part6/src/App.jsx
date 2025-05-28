@@ -11,7 +11,6 @@ const App = () => {
     console.log('vote')
     const updatedAnecdote = { ...anecdote, votes: anecdote.votes + 1 }
     voteAnecdote(updatedAnecdote)
-    dispatch(`you voted '${anecdote.content}'`)
   }
 
   const { isPending, isLoading, isError, data, error } = useQuery({
@@ -28,9 +27,11 @@ const App = () => {
           anecdote.id === updatedAnecdote.id ? updatedAnecdote : anecdote
         )
       })
+      dispatch(`you voted '${updatedAnecdote.content}'`)
     },
     onError: (error) => {
-      console.error('Error updating anecdote:', error)
+      const message = error.response?.data?.error || error.message
+      dispatch(message)
     }
   })
 
