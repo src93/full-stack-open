@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Route, Routes, Link, useParams } from 'react-router'
+import { Route, Routes, Link, useMatch, useNavigate } from 'react-router'
 
 const Menu = () => {
   const padding = {
@@ -55,7 +55,7 @@ const CreateNew = (props) => {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
-
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -65,6 +65,7 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    navigate('/')
   }
 
   return (
@@ -89,9 +90,8 @@ const CreateNew = (props) => {
   )
 }
 
-const Anecdote = ({ anecdotes }) => {
-  const id = parseInt(useParams().id)
-  const anecdote = anecdotes.find(item => item.id === id)
+const Anecdote = ({ anecdote }) => {
+  // const id = parseInt(useParams().id)
   return (
     <>
       <h2>{anecdote.content}</h2>
@@ -120,10 +120,14 @@ const App = () => {
   ])
 
   const [notification, setNotification] = useState('')
+  const matchAnecdoteId = useMatch('/anecdote/:id')
+  const anecdote = anecdotes.find(a => a.id === Number(matchAnecdoteId?.params.id))
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(`a new anecdote ${anecdote.content} created!`)
+    setTimeout(() => setNotification(''), 5000)
   }
 
   const anecdoteById = (id) =>
@@ -143,15 +147,14 @@ const App = () => {
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Router>
-        <Menu />
-        <Routes>
-          <Route path='/' element={ <AnecdoteList anecdotes={anecdotes} /> } />
-          <Route path='/about' element={ <About /> } />
-          <Route path='/create' element={ <CreateNew addNew={addNew} /> } />
-          <Route path='/anecdote/:id' element={ <Anecdote anecdotes={anecdotes} /> } />
-        </Routes>
-      </Router>
+      <Menu />
+      {notification && <p>{notification}</p> || ''}
+      <Routes>
+        <Route path='/' element={ <AnecdoteList anecdotes={anecdotes} /> } />
+        <Route path='/about' element={ <About /> } />
+        <Route path='/create' element={ <CreateNew addNew={addNew} /> } />
+        <Route path='/anecdote/:id' element={ <Anecdote anecdote={anecdote} /> } />
+      </Routes>
       <Footer />
     </div>
   )
