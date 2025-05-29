@@ -7,9 +7,14 @@ export const useFiled = (name) => {
     setValue(event.target.value)
   }
 
+  const reset = () => {
+    setValue('')
+  }
+
   return {
     value,
-    onChange,
-    name
+    name,
+    reset,
+    onChange
   }
 }

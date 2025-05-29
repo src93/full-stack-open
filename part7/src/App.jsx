@@ -53,9 +53,9 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const content = useFiled('content')
-  const author = useFiled('author')
-  const info = useFiled('info')
+  const {reset: resetContent, ...content} = useFiled('content')
+  const {reset: resetAuthor, ...author} = useFiled('author')
+  const {reset: resetInfo, ...info} = useFiled('info')
   const navigate = useNavigate()
 
   const handleSubmit = (e) => {
@@ -67,6 +67,12 @@ const CreateNew = (props) => {
       votes: 0
     })
     navigate('/')
+  }
+
+  const handleReset = () => {
+    resetContent()
+    resetAuthor()
+    resetInfo()
   }
 
   return (
@@ -87,6 +93,7 @@ const CreateNew = (props) => {
         </div>
         <button>create</button>
       </form>
+      <button onClick={handleReset}>reset</button>
     </div>
   )
 }
