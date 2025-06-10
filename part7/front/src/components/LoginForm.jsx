@@ -1,13 +1,11 @@
-import { useState } from 'react'
-import { login } from '../services/login'
 import Notification from './Notification/Notification'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setMessage, clearMessage } from '../reducers/notificationReducer'
+import { loginUser, setPassword, setUsername } from '../reducers/userReducer'
 
-const LoginForm = ({ setUser }) => {
+const LoginForm = () => {
   const dispatch = useDispatch()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  const { username, password } = useSelector(state => state.user)
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -16,14 +14,11 @@ const LoginForm = ({ setUser }) => {
       password
     }
     try {
-      const user = await login(credentials)
-      window.localStorage.setItem('loggedUser', JSON.stringify(user))
-      setUser(user)
-      setUsername('')
-      setPassword('')
+      // const user = await login(credentials)
+      await dispatch(loginUser(credentials)).unwrap()
     } catch (error) {
       dispatch(setMessage({
-        message: `Wrong credentials, ${error.response.data.error}`,
+        message: `Wrong credentials, ${error}`,
         typeMessage: 'error',
         timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
       }))
@@ -44,7 +39,7 @@ const LoginForm = ({ setUser }) => {
             value={username}
             name="Username"
             data-testid="loginUsername"
-            onChange={({ target }) => setUsername(target.value)} />
+            onChange={({ target }) => dispatch(setUsername(target.value))} />
         </div>
         <div>
           <span>Password</span>
@@ -53,7 +48,7 @@ const LoginForm = ({ setUser }) => {
             value={password}
             name="Password"
             data-testid="loginPassword"
-            onChange={({ target }) => setPassword(target.value)} />
+            onChange={({ target }) => dispatch(setPassword(target.value))} />
         </div>
         <button
           data-testid="loginButton"

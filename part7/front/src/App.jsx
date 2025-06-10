@@ -1,31 +1,34 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import Blog from './components/Blog'
+import { useDispatch, useSelector } from 'react-redux'
+import { setUser, clearInputFormLogin } from './reducers/userReducer'
 
 import LoginForm from './components/LoginForm'
 
 const App = () => {
-  const [user, setUser] = useState(null)
+  const dispatch = useDispatch()
+  const userLogged = useSelector(state => state.user.userLogged)
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       console.log('user', user.username);
-      setUser(user)
+      dispatch(setUser(user))
     }
-  }, [])
+  }, [dispatch])
 
   const handleLogout = () => {
-    setUser(null)
+    dispatch(clearInputFormLogin())
     window.localStorage.removeItem('loggedUser')
   }
 
   return (
     <div>
       {
-        !user ?
-        <LoginForm setUser={setUser} /> :
-        <Blog handleLogout={handleLogout} user={user} />
+        !userLogged ?
+        <LoginForm /> :
+        <Blog handleLogout={handleLogout} user={userLogged} />
       }
     </div>
   )
