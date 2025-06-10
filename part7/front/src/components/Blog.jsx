@@ -6,7 +6,7 @@ import blogService from '../services/blogs'
 import Notification from './Notification/Notification'
 import { setMessage, clearMessage } from '../reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
-import { initializeBlogs, createPost } from '../reducers/blogReducer'
+import { initializeBlogs, createPost, updatePost, removePost } from '../reducers/blogReducer'
 
 const Blog = ({ user, handleLogout }) => {
   const dispatch = useDispatch()
@@ -39,13 +39,12 @@ const Blog = ({ user, handleLogout }) => {
   const handleUpdatePost = async (newPost) => {
     try {
       blogService.setToken(user.token)
-      const response = await blogService.update(newPost)
-      // setBlog(blog.map(post => post.id !== newPost.id ? post : response))
-      // dispatch(setMessage({
-      //   message: `title: ${response.title} by ${response.author} updated`,
-      //   typeMessage: 'success',
-      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      // }))
+      dispatch(updatePost(newPost))
+      dispatch(setMessage({
+        message: `title: ${newPost.title} by ${newPost.author} updated`,
+        typeMessage: 'success',
+        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      }))
     } catch (error) {
       dispatch(setMessage({
         message: 'Error updating post',
@@ -58,13 +57,12 @@ const Blog = ({ user, handleLogout }) => {
   const handleRemovePost = async (id) => {
     try {
       blogService.setToken(user.token)
-      await blogService.remove(id)
-      // setBlog(blog.filter(post => post.id !== id))
-      // dispatch(setMessage({
-      //   message: 'Post deleted',
-      //   typeMessage: 'success',
-      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      // }))
+      dispatch(removePost(id))
+      dispatch(setMessage({
+        message: 'Post deleted',
+        typeMessage: 'success',
+        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      }))
     } catch (error) {
       dispatch(setMessage({
         message: 'Error deleting post',
