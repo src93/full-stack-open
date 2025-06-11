@@ -4,11 +4,10 @@ import Togglable from './Togglable'
 import FormNewPost from './form-new-post/FormNewPost'
 import blogService from '../services/blogs'
 import Notification from './Notification/Notification'
-import { setMessage, clearMessage } from '../reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
+import { useNotification } from '../hooks'
 
 const Blog = ({ user, handleLogout }) => {
-  const dispatch = useDispatch()
+  const { setNotification } = useNotification()
   const [blog, setBlog] = useState([])
   const blogFormRef = useRef()
 
@@ -24,17 +23,25 @@ const Blog = ({ user, handleLogout }) => {
       blogService.setToken(user.token)
       const response = await blogService.create(newPost)
       setBlog(blog.concat(response))
-      dispatch(setMessage({
+      setNotification({
         message: `A new blog ${response.title} by ${response.author} added`,
         typeMessage: 'success',
-        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      }))
+      })
+      // dispatch(setMessage({
+      //   message: `A new blog ${response.title} by ${response.author} added`,
+      //   typeMessage: 'success',
+      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      // }))
     } catch (error) {
-      dispatch(setMessage({
+      setNotification({
         message: 'Error creating post',
         typeMessage: 'error',
-        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      }))
+      })
+      // dispatch(setMessage({
+      //   message: 'Error creating post',
+      //   typeMessage: 'error',
+      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      // }))
     }
   }
 
@@ -43,17 +50,25 @@ const Blog = ({ user, handleLogout }) => {
       blogService.setToken(user.token)
       const response = await blogService.update(newPost)
       setBlog(blog.map(post => post.id !== newPost.id ? post : response))
-      dispatch(setMessage({
+      setNotification({
         message: `title: ${response.title} by ${response.author} updated`,
         typeMessage: 'success',
-        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      }))
+      })
+      // dispatch(setMessage({
+      //   message: `title: ${response.title} by ${response.author} updated`,
+      //   typeMessage: 'success',
+      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      // }))
     } catch (error) {
-      dispatch(setMessage({
+      setNotification({
         message: 'Error updating post',
         typeMessage: 'error',
-        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      }))
+      })
+      // dispatch(setMessage({
+      //   message: 'Error updating post',
+      //   typeMessage: 'error',
+      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      // }))
     }
   }
 
@@ -62,17 +77,25 @@ const Blog = ({ user, handleLogout }) => {
       blogService.setToken(user.token)
       await blogService.remove(id)
       setBlog(blog.filter(post => post.id !== id))
-      dispatch(setMessage({
+      setNotification({
         message: 'Post deleted',
         typeMessage: 'success',
-        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      }))
+      })
+      // dispatch(setMessage({
+      //   message: 'Post deleted',
+      //   typeMessage: 'success',
+      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      // }))
     } catch (error) {
-      dispatch(setMessage({
+      setNotification({
         message: 'Error deleting post',
         typeMessage: 'error',
-        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      }))
+      })
+      // dispatch(setMessage({
+      //   message: 'Error deleting post',
+      //   typeMessage: 'error',
+      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      // }))
     }
   }
 

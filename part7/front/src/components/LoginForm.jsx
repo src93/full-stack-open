@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { login } from '../services/login'
 import Notification from './Notification/Notification'
-import { useDispatch } from 'react-redux'
-import { setMessage, clearMessage } from '../reducers/notificationReducer'
+import { useNotification } from '../hooks'
 
 const LoginForm = ({ setUser }) => {
-  const dispatch = useDispatch()
+  const { setNotification } = useNotification()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -22,11 +21,15 @@ const LoginForm = ({ setUser }) => {
       setUsername('')
       setPassword('')
     } catch (error) {
-      dispatch(setMessage({
+      setNotification({
         message: `Wrong credentials, ${error.response.data.error}`,
         typeMessage: 'error',
-        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      }))
+      })
+      // dispatch(setMessage({
+      //   message: `Wrong credentials, ${error.response.data.error}`,
+      //   typeMessage: 'error',
+      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      // }))
     }
   }
 
