@@ -1,74 +1,59 @@
-import { useState, useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import Post from './Post/Post'
 import Togglable from './Togglable'
 import FormNewPost from './form-new-post/FormNewPost'
 import blogService from '../services/blogs'
 import Notification from './Notification/Notification'
 import { useNotification } from '../hooks'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 const Blog = ({ user, handleLogout }) => {
+  const queryClient = useQueryClient()
   const { setNotification } = useNotification()
-  const [blog, setBlog] = useState([])
   const blogFormRef = useRef()
+  const { data } = useQuery({
+    queryKey: ['blogs'],
+    queryFn: blogService.getAll
+  })
+  const blog = data || []
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlog(blogs)
-    )
-  }, [])
-
-  const handleCreatePost = async (newPost) => {
-    blogFormRef.current.toggleVisibility()
-    try {
-      blogService.setToken(user.token)
-      const response = await blogService.create(newPost)
-      setBlog(blog.concat(response))
+  const { mutate: createPost } = useMutation({
+    mutationFn: (newPost) => blogService.create(newPost),
+    onSuccess: (createdPost) => {
+      queryClient.setQueryData(['blogs'], (oldBlogs) => oldBlogs.concat(createdPost))
       setNotification({
-        message: `A new blog ${response.title} by ${response.author} added`,
+        message: `A new blog ${createdPost.title} by ${createdPost.author} added`,
         typeMessage: 'success',
       })
-      // dispatch(setMessage({
-      //   message: `A new blog ${response.title} by ${response.author} added`,
-      //   typeMessage: 'success',
-      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      // }))
-    } catch (error) {
+    },
+    onError: (error) => {
       setNotification({
         message: 'Error creating post',
         typeMessage: 'error',
       })
-      // dispatch(setMessage({
-      //   message: 'Error creating post',
-      //   typeMessage: 'error',
-      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      // }))
     }
+  })
+
+  const handleCreatePost = async (newPost) => {
+    blogFormRef.current.toggleVisibility()
+    blogService.setToken(user.token)
+    createPost(newPost)
   }
 
   const handleUpdatePost = async (newPost) => {
     try {
       blogService.setToken(user.token)
       const response = await blogService.update(newPost)
-      setBlog(blog.map(post => post.id !== newPost.id ? post : response))
+      // setBlog(blog.map(post => post.id !== newPost.id ? post : response))
       setNotification({
         message: `title: ${response.title} by ${response.author} updated`,
         typeMessage: 'success',
       })
-      // dispatch(setMessage({
-      //   message: `title: ${response.title} by ${response.author} updated`,
-      //   typeMessage: 'success',
-      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      // }))
     } catch (error) {
       setNotification({
         message: 'Error updating post',
         typeMessage: 'error',
       })
-      // dispatch(setMessage({
-      //   message: 'Error updating post',
-      //   typeMessage: 'error',
-      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      // }))
     }
   }
 
@@ -76,26 +61,16 @@ const Blog = ({ user, handleLogout }) => {
     try {
       blogService.setToken(user.token)
       await blogService.remove(id)
-      setBlog(blog.filter(post => post.id !== id))
+      // setBlog(blog.filter(post => post.id !== id))
       setNotification({
         message: 'Post deleted',
         typeMessage: 'success',
       })
-      // dispatch(setMessage({
-      //   message: 'Post deleted',
-      //   typeMessage: 'success',
-      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      // }))
     } catch (error) {
       setNotification({
         message: 'Error deleting post',
         typeMessage: 'error',
       })
-      // dispatch(setMessage({
-      //   message: 'Error deleting post',
-      //   typeMessage: 'error',
-      //   timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
-      // }))
     }
   }
 
