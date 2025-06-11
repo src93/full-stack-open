@@ -4,35 +4,16 @@ import Togglable from './Togglable'
 import FormNewPost from './form-new-post/FormNewPost'
 import blogService from '../services/blogs'
 import Notification from './Notification/Notification'
-import { useNotification } from '../hooks'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useGetPosts, useCreatePost, useUpdatePost, useRemovePost } from '../hooks'
 
 const Blog = ({ user, handleLogout }) => {
-  const queryClient = useQueryClient()
-  const { setNotification } = useNotification()
   const blogFormRef = useRef()
-  const { data } = useQuery({
-    queryKey: ['blogs'],
-    queryFn: blogService.getAll
-  })
+  const data = useGetPosts()
   const blog = data || []
 
-  const { mutate: createPost } = useMutation({
-    mutationFn: (newPost) => blogService.create(newPost),
-    onSuccess: (createdPost) => {
-      queryClient.setQueryData(['blogs'], (oldBlogs) => oldBlogs.concat(createdPost))
-      setNotification({
-        message: `A new blog ${createdPost.title} by ${createdPost.author} added`,
-        typeMessage: 'success',
-      })
-    },
-    onError: (error) => {
-      setNotification({
-        message: 'Error creating post',
-        typeMessage: 'error',
-      })
-    }
-  })
+  const { mutate: createPost } = useCreatePost()
+  const { mutate: updatePost } = useUpdatePost()
+  const { mutate: removePost } = useRemovePost()
 
   const handleCreatePost = async (newPost) => {
     blogFormRef.current.toggleVisibility()
@@ -41,37 +22,13 @@ const Blog = ({ user, handleLogout }) => {
   }
 
   const handleUpdatePost = async (newPost) => {
-    try {
-      blogService.setToken(user.token)
-      const response = await blogService.update(newPost)
-      // setBlog(blog.map(post => post.id !== newPost.id ? post : response))
-      setNotification({
-        message: `title: ${response.title} by ${response.author} updated`,
-        typeMessage: 'success',
-      })
-    } catch (error) {
-      setNotification({
-        message: 'Error updating post',
-        typeMessage: 'error',
-      })
-    }
+    blogService.setToken(user.token)
+    updatePost(newPost)
   }
 
   const handleRemovePost = async (id) => {
-    try {
-      blogService.setToken(user.token)
-      await blogService.remove(id)
-      // setBlog(blog.filter(post => post.id !== id))
-      setNotification({
-        message: 'Post deleted',
-        typeMessage: 'success',
-      })
-    } catch (error) {
-      setNotification({
-        message: 'Error deleting post',
-        typeMessage: 'error',
-      })
-    }
+    blogService.setToken(user.token)
+    removePost(id)
   }
 
   return (

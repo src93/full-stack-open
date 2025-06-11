@@ -53,7 +53,7 @@ router.delete('/:id', async (request, response, next) => {
   }
   try {
     await Blog.findByIdAndDelete(id)
-    response.status(204).end()
+    response.status(200).json({ id })
   } catch (error) {
     next(error)
   }
