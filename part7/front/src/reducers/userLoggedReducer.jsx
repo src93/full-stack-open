@@ -45,7 +45,8 @@ const userSlice = createSlice({
         password
       }
     },
-    clearInputFormLogin() {
+    logout() {
+      window.localStorage.removeItem('loggedUser')
       return initialState
     }
   },
@@ -67,5 +68,5 @@ const userSlice = createSlice({
   }
 })
 
-export const { setUser, setPassword, setUsername, clearInputFormLogin } = userSlice.actions
+export const { setUser, setPassword, setUsername, logout } = userSlice.actions
 export default userSlice.reducer

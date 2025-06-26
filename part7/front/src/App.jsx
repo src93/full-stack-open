@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
 import Blog from './components/Blog'
 import { useDispatch, useSelector } from 'react-redux'
-import { setUser, clearInputFormLogin } from './reducers/userLoggedReducer'
+import { setUser } from './reducers/userLoggedReducer'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import ListUsers from './components/ListUsers/ListUsers'
 
 import LoginForm from './components/LoginForm'
 
@@ -18,19 +20,13 @@ const App = () => {
     }
   }, [dispatch])
 
-  const handleLogout = () => {
-    dispatch(clearInputFormLogin())
-    window.localStorage.removeItem('loggedUser')
-  }
-
   return (
-    <div>
-      {
-        !userLogged ?
-        <LoginForm /> :
-        <Blog handleLogout={handleLogout} user={userLogged} />
-      }
-    </div>
+    <Router>
+      <Routes>
+        <Route path='/' element={ !userLogged ? <LoginForm /> : <Blog /> } />
+        <Route path='/users' element={ !userLogged ? <LoginForm /> : <ListUsers /> } />
+      </Routes>
+    </Router>
   )
 }
 

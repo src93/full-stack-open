@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { initializeUsers } from '../../reducers/usersReducer'
 import { useDispatch, useSelector } from 'react-redux'
+import UserLogged from '../UserLogged/UserLogged'
 
 const ListUsers = () => {
   const dispatch = useDispatch()
@@ -12,6 +13,7 @@ const ListUsers = () => {
 
   return (
     <>
+      <UserLogged />
       <h2>Users</h2>
       <table>
         <thead>
@@ -23,7 +25,7 @@ const ListUsers = () => {
         <tbody>
           {users.map(user => (
             <tr key={user.id}>
-              <td>{user.name}</td>
+              <td>{user.username}</td>
               <td>{user.blogs.length}</td>
             </tr>
           ))}

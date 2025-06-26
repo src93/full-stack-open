@@ -3,15 +3,15 @@ import Post from './Post/Post'
 import Togglable from './Togglable'
 import FormNewPost from './form-new-post/FormNewPost'
 import blogService from '../services/blogs'
-import Notification from './Notification/Notification'
-import ListUsers from './ListUsers/ListUsers'
 import { setMessage, clearMessage } from '../reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs, createPost, updatePost, removePost } from '../reducers/blogReducer'
+import UserLogged from './UserLogged/UserLogged'
 
-const Blog = ({ user, handleLogout }) => {
+const Blog = () => {
   const dispatch = useDispatch()
   const blog = useSelector(state => state.blog)
+  const user = useSelector(state => state.userLogged.user)
   const blogFormRef = useRef()
 
   useEffect(() => {
@@ -75,14 +75,7 @@ const Blog = ({ user, handleLogout }) => {
 
   return (
     <div data-testid="blog">
-      <h2>Blogs</h2>
-      <Notification />
-      <p>{user.username} logged in</p>
-      <button
-        data-testid="btnLogout"
-        onClick={handleLogout}>
-        Logout
-      </button>
+      <UserLogged />
       <br />
       <Togglable buttonLabel="Create new post" ref={blogFormRef}>
         <FormNewPost createNewPost={handleCreatePost} />
@@ -95,7 +88,6 @@ const Blog = ({ user, handleLogout }) => {
           updatePost={handleUpdatePost}
           removePost={handleRemovePost} />
       ))}
-      <ListUsers />
     </div>
   )
 }
