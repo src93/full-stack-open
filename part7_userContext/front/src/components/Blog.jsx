@@ -8,7 +8,7 @@ import { useGetPosts, useCreatePost, useUpdatePost, useRemovePost } from '../hoo
 import { useUser } from '../hooks'
 
 const Blog = () => {
-  const { userContext, clearUser } = useUser()
+  const { userLogged, clearUser } = useUser()
   const blogFormRef = useRef()
   const data = useGetPosts()
   const blog = data || []
@@ -19,17 +19,17 @@ const Blog = () => {
 
   const handleCreatePost = async (newPost) => {
     blogFormRef.current.toggleVisibility()
-    blogService.setToken(userContext.token)
+    blogService.setToken(userLogged.user.token)
     createPost(newPost)
   }
 
   const handleUpdatePost = async (newPost) => {
-    blogService.setToken(userContext.token)
+    blogService.setToken(userLogged.user.token)
     updatePost(newPost)
   }
 
   const handleRemovePost = async (id) => {
-    blogService.setToken(userContext.token)
+    blogService.setToken(userLogged.user.token)
     removePost(id)
   }
 
@@ -37,7 +37,7 @@ const Blog = () => {
     <div data-testid="blog">
       <h2>Blogs</h2>
       <Notification />
-      <p>{userContext.username} logged in</p>
+      <p>{userLogged.username} logged in</p>
       <button
         data-testid="btnLogout"
         onClick={clearUser}>
@@ -51,7 +51,7 @@ const Blog = () => {
         <Post
           key={post.id}
           post={post}
-          user={userContext.user}
+          user={userLogged.user}
           updatePost={handleUpdatePost}
           removePost={handleRemovePost} />
       ))}

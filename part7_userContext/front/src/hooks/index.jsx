@@ -47,7 +47,7 @@ export const useNotification = () => {
 }
 
 export const useUser = () => {
-  const { user: userContext, userDispatch } = useContext(UserContext)
+  const { userLogged, userDispatch } = useContext(UserContext)
   const setUser = useCallback((user) => {
     userDispatch({ type: 'SET_USER', payload: user })
   }, [userDispatch])
@@ -56,7 +56,7 @@ export const useUser = () => {
     window.localStorage.removeItem('loggedUser')
   }
   return {
-    userContext,
+    userLogged,
     setUser,
     clearUser
   }

@@ -27,10 +27,10 @@ const initializeUser = {
 }
 
 export const UserProvider = ({ children }) => {
-  const [user, userDispatch] = useReducer(userReducer, initializeUser)
+  const [userLogged, userDispatch] = useReducer(userReducer, initializeUser)
 
   return (
-    <UserContext.Provider value={{ user, userDispatch }}>
+    <UserContext.Provider value={{ userLogged, userDispatch }}>
       {children}
     </UserContext.Provider>
   )

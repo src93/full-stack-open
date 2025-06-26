@@ -5,21 +5,23 @@ import { useUser } from './hooks'
 import LoginForm from './components/LoginForm'
 
 const App = () => {
-  const { setUser, userContext } = useUser()
+  const { setUser, userLogged } = useUser()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      console.log('user', user.username);
-      setUser(user)
+      const userInSession = JSON.parse(loggedUserJSON)
+      console.log('user', userInSession.username);
+      setUser({
+        user: userInSession
+      })
     }
   }, [setUser])
 
   return (
     <div>
       {
-        !userContext.user ?
+        !userLogged.user ?
         <LoginForm /> :
         <Blog />
       }

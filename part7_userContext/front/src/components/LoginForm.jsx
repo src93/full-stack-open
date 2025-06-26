@@ -4,13 +4,13 @@ import { useNotification, useUser } from '../hooks'
 
 const LoginForm = () => {
   const { setNotification } = useNotification()
-  const { userContext, setUser } = useUser()
+  const { userLogged, setUser } = useUser()
 
   const handleLogin = async (e) => {
     e.preventDefault()
     const credentials = {
-      username: userContext.username,
-      password: userContext.password
+      username: userLogged.username,
+      password: userLogged.password
     }
     try {
       const user = await login(credentials)
@@ -35,7 +35,7 @@ const LoginForm = () => {
           <span>username</span>
           <input
             type="text"
-            value={userContext.username}
+            value={userLogged.username}
             name="Username"
             data-testid="loginUsername"
             onChange={({ target }) => setUser({ username: target.value})} />
@@ -44,7 +44,7 @@ const LoginForm = () => {
           <span>Password</span>
           <input
             type="text"
-            value={userContext.password}
+            value={userLogged.password}
             name="Password"
             data-testid="loginPassword"
             onChange={({ target }) => setUser({ password: target.value})} />
