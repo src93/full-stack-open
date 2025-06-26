@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { login } from '../services/login'
 
 const initialState = {
-  userLogged: null,
+  user: null,
   username: '',
   password: ''
 }
@@ -25,10 +25,10 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser(state, action) {
-      const userLogged = action.payload
+      const user = action.payload
       return {
         ...state,
-        userLogged
+        user
       }
     },
     setUsername(state, action) {
@@ -55,7 +55,7 @@ const userSlice = createSlice({
         const user = action.payload
         window.localStorage.setItem('loggedUser', JSON.stringify(user))
         return {
-          userLogged: user,
+          user,
           username: '',
           password: ''
         }

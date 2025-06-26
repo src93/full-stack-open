@@ -4,6 +4,7 @@ import Togglable from './Togglable'
 import FormNewPost from './form-new-post/FormNewPost'
 import blogService from '../services/blogs'
 import Notification from './Notification/Notification'
+import ListUsers from './ListUsers/ListUsers'
 import { setMessage, clearMessage } from '../reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs, createPost, updatePost, removePost } from '../reducers/blogReducer'
@@ -94,6 +95,7 @@ const Blog = ({ user, handleLogout }) => {
           updatePost={handleUpdatePost}
           removePost={handleRemovePost} />
       ))}
+      <ListUsers />
     </div>
   )
 }

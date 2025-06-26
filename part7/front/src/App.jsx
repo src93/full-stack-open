@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
 import Blog from './components/Blog'
 import { useDispatch, useSelector } from 'react-redux'
-import { setUser, clearInputFormLogin } from './reducers/userReducer'
+import { setUser, clearInputFormLogin } from './reducers/userLoggedReducer'
 
 import LoginForm from './components/LoginForm'
 
 const App = () => {
   const dispatch = useDispatch()
-  const userLogged = useSelector(state => state.user.userLogged)
+  const userLogged = useSelector(state => state.userLogged.user)
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')

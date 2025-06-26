@@ -1,11 +1,11 @@
 import Notification from './Notification/Notification'
 import { useDispatch, useSelector } from 'react-redux'
 import { setMessage, clearMessage } from '../reducers/notificationReducer'
-import { loginUser, setPassword, setUsername } from '../reducers/userReducer'
+import { loginUser, setPassword, setUsername } from '../reducers/userLoggedReducer'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
-  const { username, password } = useSelector(state => state.user)
+  const { username, password } = useSelector(state => state.userLogged)
 
   const handleLogin = async (e) => {
     e.preventDefault()
