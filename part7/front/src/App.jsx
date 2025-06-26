@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import Blog from './components/Blog'
+import { useUser } from './hooks'
 
 import LoginForm from './components/LoginForm'
 
 const App = () => {
-  const [user, setUser] = useState(null)
+  const { setUser, userContext } = useUser()
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser')
@@ -13,19 +14,14 @@ const App = () => {
       console.log('user', user.username);
       setUser(user)
     }
-  }, [])
-
-  const handleLogout = () => {
-    setUser(null)
-    window.localStorage.removeItem('loggedUser')
-  }
+  }, [setUser])
 
   return (
     <div>
       {
-        !user ?
-        <LoginForm setUser={setUser} /> :
-        <Blog handleLogout={handleLogout} user={user} />
+        !userContext.user ?
+        <LoginForm /> :
+        <Blog />
       }
     </div>
   )

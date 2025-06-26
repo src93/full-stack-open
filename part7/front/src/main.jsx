@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.jsx'
 import { NotificationProvider } from './context/NotificationContext.jsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { UserProvider } from './context/UserContext.jsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,9 +18,11 @@ const queryClient = new QueryClient({
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <NotificationProvider>
-        <App />
-      </NotificationProvider>
+      <UserProvider>
+        <NotificationProvider>
+          <App />
+        </NotificationProvider>
+      </UserProvider>
     </QueryClientProvider>
   </StrictMode>
 )

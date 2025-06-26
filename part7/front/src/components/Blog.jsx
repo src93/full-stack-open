@@ -5,8 +5,10 @@ import FormNewPost from './form-new-post/FormNewPost'
 import blogService from '../services/blogs'
 import Notification from './Notification/Notification'
 import { useGetPosts, useCreatePost, useUpdatePost, useRemovePost } from '../hooks'
+import { useUser } from '../hooks'
 
-const Blog = ({ user, handleLogout }) => {
+const Blog = () => {
+  const { userContext, clearUser } = useUser()
   const blogFormRef = useRef()
   const data = useGetPosts()
   const blog = data || []
@@ -17,17 +19,17 @@ const Blog = ({ user, handleLogout }) => {
 
   const handleCreatePost = async (newPost) => {
     blogFormRef.current.toggleVisibility()
-    blogService.setToken(user.token)
+    blogService.setToken(userContext.token)
     createPost(newPost)
   }
 
   const handleUpdatePost = async (newPost) => {
-    blogService.setToken(user.token)
+    blogService.setToken(userContext.token)
     updatePost(newPost)
   }
 
   const handleRemovePost = async (id) => {
-    blogService.setToken(user.token)
+    blogService.setToken(userContext.token)
     removePost(id)
   }
 
@@ -35,10 +37,10 @@ const Blog = ({ user, handleLogout }) => {
     <div data-testid="blog">
       <h2>Blogs</h2>
       <Notification />
-      <p>{user.username} logged in</p>
+      <p>{userContext.username} logged in</p>
       <button
         data-testid="btnLogout"
-        onClick={handleLogout}>
+        onClick={clearUser}>
         Logout
       </button>
       <br />
@@ -49,7 +51,7 @@ const Blog = ({ user, handleLogout }) => {
         <Post
           key={post.id}
           post={post}
-          user={user}
+          user={userContext.user}
           updatePost={handleUpdatePost}
           removePost={handleRemovePost} />
       ))}

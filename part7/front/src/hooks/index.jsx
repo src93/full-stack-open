@@ -1,5 +1,6 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useCallback } from 'react'
 import NotificationContext from '../context/NotificationContext.jsx'
+import UserContext from '../context/UserContext.jsx'
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query'
 import blogService from '../services/blogs.js'
 
@@ -42,6 +43,22 @@ export const useNotification = () => {
   return {
     ...notification,
     setNotification
+  }
+}
+
+export const useUser = () => {
+  const { user: userContext, userDispatch } = useContext(UserContext)
+  const setUser = useCallback((user) => {
+    userDispatch({ type: 'SET_USER', payload: user })
+  }, [userDispatch])
+  const clearUser = () => {
+    userDispatch({ type: 'CLEAR_USER' })
+    window.localStorage.removeItem('loggedUser')
+  }
+  return {
+    userContext,
+    setUser,
+    clearUser
   }
 }
 
