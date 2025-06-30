@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from './reducers/userLoggedReducer'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import ListUsers from './components/ListUsers/ListUsers'
-
+import ListPostsByUser from './components/ListPostByUser/ListPostByUser'
 import LoginForm from './components/LoginForm'
 
 const App = () => {
@@ -25,6 +25,7 @@ const App = () => {
       <Routes>
         <Route path='/' element={ !userLogged ? <LoginForm /> : <Blog /> } />
         <Route path='/users' element={ !userLogged ? <LoginForm /> : <ListUsers /> } />
+        <Route path='/users/:id' element={ <ListPostsByUser /> } />
       </Routes>
     </Router>
   )
