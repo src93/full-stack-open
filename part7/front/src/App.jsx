@@ -1,11 +1,12 @@
 import { useEffect } from 'react'
-import Blog from './components/Blog'
+import Blog from './components/Blog/Blog'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from './reducers/userLoggedReducer'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import ListUsers from './components/ListUsers/ListUsers'
 import ListPostsByUser from './components/ListPostByUser/ListPostByUser'
 import LoginForm from './components/LoginForm'
+import Post from './components/Post/Post'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -26,6 +27,7 @@ const App = () => {
         <Route path='/' element={ !userLogged ? <LoginForm /> : <Blog /> } />
         <Route path='/users' element={ !userLogged ? <LoginForm /> : <ListUsers /> } />
         <Route path='/users/:id' element={ <ListPostsByUser /> } />
+        <Route path='/blogs/:id' element={ <Post /> } />
       </Routes>
     </Router>
   )

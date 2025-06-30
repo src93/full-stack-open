@@ -1,14 +1,18 @@
-import { useState, useEffect } from 'react'
 import './Post.css'
 import PropTypes from 'prop-types'
+import { setMessage, clearMessage } from '../../reducers/notificationReducer'
+import { updatePost, removePost } from '../../reducers/blogReducer'
+import blogService from '../../services/blogs'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import UserLogged from '../UserLogged/UserLogged'
 
-const Post = ({ post, updatePost, removePost, user }) => {
-  const [showDetails, setShowDetails] = useState(false)
-  const [textButtonView, setTextButtonView] = useState('view')
-
-  useEffect(() => {
-    showDetails ? setTextButtonView('hide') : setTextButtonView('view')
-  }, [showDetails])
+const Post = () => {
+  const dispatch = useDispatch()
+  const { id } = useParams()
+  const userLogged = useSelector(state => state.userLogged.user)
+  const blog = useSelector(state => state.blog)
+  const post = blog.find(post => post.id === id)
 
   const handleLike = async () => {
     const newPost = {
@@ -16,24 +20,57 @@ const Post = ({ post, updatePost, removePost, user }) => {
       user: post.user.id,
       likes: post.likes + 1
     }
-    updatePost(newPost)
+    try {
+      blogService.setToken(userLogged.token)
+      dispatch(updatePost(newPost))
+      dispatch(setMessage({
+        message: `title: ${newPost.title} by ${newPost.author} updated`,
+        typeMessage: 'success',
+        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      }))
+    } catch (error) {
+      dispatch(setMessage({
+        message: 'Error updating post',
+        typeMessage: 'error',
+        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      }))
+    }
   }
 
   const handleRemove = async () => {
     const userWantsRemove = window.confirm(`Are you sure you want to delete ${post.title} blog?`)
     if (userWantsRemove) {
-      removePost(post.id)
+      const { id } = post
+      try {
+        blogService.setToken(userLogged.token)
+        dispatch(removePost(id))
+        dispatch(setMessage({
+          message: 'Post deleted',
+          typeMessage: 'success',
+          timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+        }))
+      } catch (error) {
+        dispatch(setMessage({
+          message: 'Error deleting post',
+          typeMessage: 'error',
+          timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+        }))
+      }
     }
   }
 
   const canSeeDetails = () => {
-    return user.username === post?.user?.username
+    return userLogged.username === post?.user?.username
   }
 
-  const details = () => {
-    return (
-      <>
-        <p data-testid="postUrl">{post.url}</p>
+  return (
+    <>
+      <UserLogged />
+      <div data-testid="contentPost">
+        <h2 data-testid="postTitle">{post.title} by {post.author}</h2>
+        <a href={post.url} target="_blank" rel="noopener noreferrer">
+          <p>{post.url}</p>
+        </a>
         <span data-testid="postLikes">{post.likes} likes</span>
         <button
           data-testid="btnLikes"
@@ -52,20 +89,8 @@ const Post = ({ post, updatePost, removePost, user }) => {
             </button>
             : ''
         }
-      </>
-    )
-  }
-
-  return (
-    <div className="post" data-testid="contentPost">
-      <span data-testid="postTitle">{post.title}</span> by <span data-testid="postAuthor">{post.author}</span>
-      <button
-        data-testid="btnView"
-        onClick={() => setShowDetails(!showDetails)}>
-        {textButtonView}
-      </button>
-      {showDetails ? details() : ''}
-    </div>
+      </div>
+    </>
   )
 }
 
