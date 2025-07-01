@@ -89,6 +89,18 @@ const Post = () => {
             </button>
             : ''
         }
+        <h2>Comments</h2>
+        <ul>
+          {post.comments.length === 0 ? (
+            <p>No comments yet</p>
+          ) : (
+            post.comments.map((comment, index) => (
+              <li key={index} data-testid="commentItem">
+                {comment}
+              </li>
+            ))
+          )}
+        </ul>
       </div>
     </>
   )

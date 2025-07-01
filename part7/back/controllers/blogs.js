@@ -43,6 +43,31 @@ router.post('/', async (request, response, next) => {
   }
 })
 
+router.post('/:id/comments', async (request, response, next) => {
+  const { body } = request
+  console.log('request body', request.body)
+
+  if (!body) {
+    return response.status(400).json({
+      error: 'content missing'
+    })
+  }
+  console.log('body', body)
+  const { id } = request.params
+  const user = await User.findById(request.userId)
+  if (!user) {
+    return response.status(401).json({
+      error: 'token invalid'
+    })
+  }
+  try {
+    const updatedBlog = await Blog.findByIdAndUpdate(id, { $push: { comments: body.comment } }, { new: true, runValidators: true, context: 'query' }).populate('user')
+    response.status(201).json(updatedBlog)
+  } catch (error) {
+    next(error)
+  }
+})
+
 router.delete('/:id', async (request, response, next) => {
   const { id } = request.params
   const user = await User.findById(request.userId)
