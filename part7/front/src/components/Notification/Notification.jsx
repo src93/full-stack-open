@@ -1,5 +1,8 @@
-import './Notification.css'
 import { useSelector } from 'react-redux'
+import {
+  ErrorMessage,
+  SuccessMessage
+} from './Notification.js'
 
 const Notification = () => {
   const notification = useSelector((state) => state.notification)
@@ -8,9 +11,9 @@ const Notification = () => {
     return null
   }
   return (
-    <div className={typeMessage === 'error' ? 'error' : 'success'}>
-      {message}
-    </div>
+    typeMessage === 'error'
+      ? <ErrorMessage data-testid="errorMessage">{message}</ErrorMessage>
+      : <SuccessMessage data-testid="successMessage">{message}</SuccessMessage>
   )
 }
 

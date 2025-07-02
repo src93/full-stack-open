@@ -1,8 +1,13 @@
 import { logout } from '../../reducers/userLoggedReducer'
 import { useSelector, useDispatch } from 'react-redux'
-import Notification from '../Notification/Notification'
+import Notification from '../Notification/Notification.jsx'
 import { Link } from 'react-router-dom'
-import './UserLogged.css'
+import {
+  LogoutButton,
+  MenuNav,
+  MenuItem,
+  Nav
+} from './UserLogged.js'
 
 const UserLogged = () => {
   const dispatch = useDispatch()
@@ -15,23 +20,23 @@ const UserLogged = () => {
   return (
     <>
       <h2>Blogs</h2>
-      <nav>
-        <ul className="menu-nav">
+      <Nav>
+        <MenuNav>
           <Link to="/">
-            <li>Blog</li>
+            <MenuItem>Blog</MenuItem>
           </Link>
           <Link to="/users">
-            <li>Users</li>
+            <MenuItem>Users</MenuItem>
           </Link>
-        </ul>
-      </nav>
+        </MenuNav>
+      </Nav>
       <Notification />
       <p>{userLogged.username} logged in</p>
-      <button
+      <LogoutButton
         data-testid="btnLogout"
         onClick={handleLogout}>
         Logout
-      </button>
+      </LogoutButton>
     </>
   )
 }

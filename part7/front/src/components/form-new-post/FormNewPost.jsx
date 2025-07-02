@@ -1,4 +1,10 @@
 import { useState } from 'react'
+import {
+  FormNewPostCustom,
+  InputCustom,
+  ButtonCreate,
+  ContentForm
+} from './FormNewPost.js'
 
 const FormNewPost = ({ createNewPost }) => {
   const [title, setTitle] = useState('')
@@ -19,36 +25,33 @@ const FormNewPost = ({ createNewPost }) => {
   }
 
   return (
-    <div data-testid="formNewPost">
+    <ContentForm data-testid="formNewPost">
       <h3>Create a new post</h3>
-      <form onSubmit={handleCreatePost}>
-        <input
+      <FormNewPostCustom onSubmit={handleCreatePost}>
+        <InputCustom
           type="text"
           value={title}
           name="Title"
           placeholder="Título"
           data-testid="inputTitle"
           onChange={({ target }) => setTitle(target.value)} />
-        <br />
-        <input
+        <InputCustom
           type="text"
           value={author}
           name="Author"
           placeholder="Autor"
           data-testid="inputAuthor"
           onChange={({ target }) => setAuthor(target.value)} />
-        <br />
-        <input
+        <InputCustom
           type="text"
           value={url}
           name="Url"
           placeholder="Url"
           data-testid="inputUrl"
           onChange={({ target }) => setUrl(target.value)} />
-        <br />
-        <button data-testid="btnCreate">Create</button>
-      </form>
-    </div>
+        <ButtonCreate data-testid="btnCreate">Create</ButtonCreate>
+      </FormNewPostCustom>
+    </ContentForm>
   )
 }
 

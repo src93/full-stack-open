@@ -1,12 +1,12 @@
-import './Post.css'
 import PropTypes from 'prop-types'
 import { setMessage, clearMessage } from '../../reducers/notificationReducer'
 import { updatePost, removePost } from '../../reducers/blogReducer'
 import blogService from '../../services/blogs'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useNavigate } from 'react-router-dom'
-import UserLogged from '../UserLogged/UserLogged'
+import UserLogged from '../UserLogged/UserLogged.jsx'
 import { useState } from 'react'
+import { ButtonRemove } from './Post'
 
 const Post = () => {
   const dispatch = useDispatch()
@@ -119,12 +119,11 @@ const Post = () => {
         <p>{post.user.name}</p>
         {
           canSeeDetails() ?
-            <button
-              className="btn-remove"
+            <ButtonRemove
               data-testid="btnRemove"
               onClick={handleRemove}>
               remove
-            </button>
+            </ButtonRemove>
             : ''
         }
         <h2>Comments</h2>

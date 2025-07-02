@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
-import Blog from './components/Blog/Blog'
+import Blog from './components/Blog/Blog.jsx'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from './reducers/userLoggedReducer'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import ListUsers from './components/ListUsers/ListUsers'
-import ListPostsByUser from './components/ListPostByUser/ListPostByUser'
-import LoginForm from './components/LoginForm'
-import Post from './components/Post/Post'
+import ListUsers from './components/ListUsers/ListUsers.jsx'
+import ListPostsByUser from './components/ListPostByUser/ListPostByUser.jsx'
+import LoginForm from './components/LoginForm/LoginForm.jsx'
+import Post from './components/Post/Post.jsx'
 
 const App = () => {
   const dispatch = useDispatch()

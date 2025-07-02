@@ -1,7 +1,7 @@
-import Notification from './Notification/Notification'
+import Notification from '../Notification/Notification.jsx'
 import { useDispatch, useSelector } from 'react-redux'
-import { setMessage, clearMessage } from '../reducers/notificationReducer'
-import { loginUser, setPassword, setUsername } from '../reducers/userLoggedReducer'
+import { setMessage, clearMessage } from '../../reducers/notificationReducer'
+import { loginUser, setPassword, setUsername } from '../../reducers/userLoggedReducer'
 
 const LoginForm = () => {
   const dispatch = useDispatch()

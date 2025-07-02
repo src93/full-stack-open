@@ -1,8 +1,15 @@
 import { useEffect } from 'react'
 import { initializeUsers } from '../../reducers/usersReducer'
 import { useDispatch, useSelector } from 'react-redux'
-import UserLogged from '../UserLogged/UserLogged'
+import UserLogged from '../UserLogged/UserLogged.jsx'
 import { Link } from 'react-router-dom'
+import {
+  TableListUsers,
+  TableCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow
+} from './ListUsers.js'
 
 const ListUsers = () => {
   const dispatch = useDispatch()
@@ -16,26 +23,26 @@ const ListUsers = () => {
     <>
       <UserLogged />
       <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>Blogs created</th>
-          </tr>
-        </thead>
+      <TableListUsers>
+        <TableHeader>
+          <TableRow>
+            <TableHeaderCell></TableHeaderCell>
+            <TableHeaderCell>Blogs created</TableHeaderCell>
+          </TableRow>
+        </TableHeader>
         <tbody>
           {users.map(user => (
-            <tr key={user.id}>
-              <td>
+            <TableRow key={user.id}>
+              <TableCell>
                 <Link to={`/users/${user.id}`}>
                   {user.username}
                 </Link>
-              </td>
-              <td>{user.blogs.length}</td>
-            </tr>
+              </TableCell>
+              <TableCell>{user.blogs.length}</TableCell>
+            </TableRow>
           ))}
         </tbody>
-      </table>
+      </TableListUsers>
     </>
   )
 }

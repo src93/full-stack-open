@@ -1,4 +1,5 @@
 import { useState, forwardRef, useImperativeHandle } from 'react'
+import { ButtonCancel, ButtonDefault } from './Togglable'
 
 const Togglable = forwardRef(({ buttonLabel, children }, refs) => {
   const [visible, setVisible] = useState(false)
@@ -9,16 +10,16 @@ const Togglable = forwardRef(({ buttonLabel, children }, refs) => {
 
   const contentDefault = () => {
     return (
-      <button
+      <ButtonDefault
         data-testid="btnToggleShow"
-        onClick={toggleVisibility}>{buttonLabel}</button>
+        onClick={toggleVisibility}>{buttonLabel}</ButtonDefault>
     )
   }
   const contentChildren = () => {
     return (
       <>
         {children}
-        <button onClick={toggleVisibility}>Cancel</button>
+        <ButtonCancel onClick={toggleVisibility}>Cancel</ButtonCancel>
       </>
     )
   }

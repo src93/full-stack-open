@@ -1,4 +1,6 @@
-.error {
+import styled from 'styled-components'
+
+export const ErrorMessage = styled.div`
   color: red;
   background: lightpink;
   font-size: 20px;
@@ -6,9 +8,9 @@
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
-}
+`
 
-.success {
+export const SuccessMessage = styled.div`
   color: green;
   background: lightgreen;
   font-size: 20px;
@@ -16,4 +18,4 @@
   padding: 10px;
   margin-bottom: 10px;
   border-radius: 5px;
-}
+`

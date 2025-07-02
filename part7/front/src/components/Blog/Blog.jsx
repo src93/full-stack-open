@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react'
-import Togglable from '../Togglable'
-import FormNewPost from '../form-new-post/FormNewPost'
+import Togglable from '../Togglable/Togglable.jsx'
+import FormNewPost from '../form-new-post/FormNewPost.jsx'
 import blogService from '../../services/blogs'
 import { setMessage, clearMessage } from '../../reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import { initializeBlogs, createPost } from '../../reducers/blogReducer'
-import UserLogged from '../UserLogged/UserLogged'
+import UserLogged from '../UserLogged/UserLogged.jsx'
 import { Link } from 'react-router-dom'
-import './Blog.css'
+import { ListPost, PostItem } from './Blog.js'
 
 const Blog = () => {
   const dispatch = useDispatch()
@@ -45,13 +45,15 @@ const Blog = () => {
       <Togglable buttonLabel="Create new post" ref={blogFormRef}>
         <FormNewPost createNewPost={handleCreatePost} />
       </Togglable>
-      {[...blog].sort((a, b) => b.likes - a.likes).map(post => (
-        <Link key={post.id} to={`/blogs/${post.id}`}>
-          <div className="post">
-            {post.title}
-          </div>
-        </Link>
-      ))}
+      <ListPost>
+        {[...blog].sort((a, b) => b.likes - a.likes).map(post => (
+          <Link key={post.id} to={`/blogs/${post.id}`}>
+            <PostItem>
+              {post.title}
+            </PostItem>
+          </Link>
+        ))}
+      </ListPost>
     </div>
   )
 }
