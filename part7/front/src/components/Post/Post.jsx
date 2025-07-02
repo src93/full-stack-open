@@ -4,11 +4,14 @@ import { setMessage, clearMessage } from '../../reducers/notificationReducer'
 import { updatePost, removePost } from '../../reducers/blogReducer'
 import blogService from '../../services/blogs'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import UserLogged from '../UserLogged/UserLogged'
+import { useState } from 'react'
 
 const Post = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const [comment, setComment] = useState('')
   const { id } = useParams()
   const userLogged = useSelector(state => state.userLogged.user)
   const blog = useSelector(state => state.blog)
@@ -55,7 +58,42 @@ const Post = () => {
           typeMessage: 'error',
           timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
         }))
+      } finally {
+        navigate('/')
       }
+    }
+  }
+
+  const handleAddComment = async () => {
+    if (comment.trim() === '') {
+      dispatch(setMessage({
+        message: 'Comment cannot be empty',
+        typeMessage: 'error',
+        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      }))
+      return
+    }
+
+    const newPost = {
+      ...post,
+      user: post.user.id,
+      comments: [...post.comments, comment]
+    }
+    try {
+      blogService.setToken(userLogged.token)
+      dispatch(updatePost(newPost))
+      setComment('')
+      dispatch(setMessage({
+        message: 'Comment added successfully',
+        typeMessage: 'success',
+        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      }))
+    } catch (error) {
+      dispatch(setMessage({
+        message: 'Error adding comment',
+        typeMessage: 'error',
+        timeoutId: setTimeout(() => dispatch(clearMessage()), 5000)
+      }))
     }
   }
 
@@ -90,6 +128,16 @@ const Post = () => {
             : ''
         }
         <h2>Comments</h2>
+        <input
+          type="text"
+          placeholder="Add a comment"
+          data-testid="inputComment"
+          value={comment}
+          onChange={({ target }) => setComment(target.value)} />
+        <button
+          onClick={handleAddComment}>
+          Add Comment
+        </button>
         <ul>
           {post.comments.length === 0 ? (
             <p>No comments yet</p>
