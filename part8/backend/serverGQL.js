@@ -1,5 +1,6 @@
 import { ApolloServer } from '@apollo/server'
 import { startStandaloneServer } from '@apollo/server/standalone'
+import { v4 as uuid } from 'uuid'
 
 let authors = [
   {
@@ -119,6 +120,15 @@ const typeDefs = `
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
   }
+
+  type Mutation {
+    addBook(
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String!]!
+    ): Book!
+  }
 `
 
 const resolvers = {
@@ -130,13 +140,40 @@ const resolvers = {
         const authorMatch = !args.author || book.author === args.author
         const genreMatch = !args.genre || book.genres.includes(args.genre)
         return authorMatch && genreMatch
-      });
+      })
     },
     allAuthors: () => authors
   },
   Author: {
     numberOfBooks: (root) => {
       return books.filter(book => book.author === root.name).length
+    }
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const existingBook = books.find(book => book.title === args.title && book.author === args.author)
+      if (existingBook) {
+        throw new Error('Book already exists')
+      }
+
+      const authorExists = authors.some(author => author.name === args.author)
+      if (!authorExists) {
+        const newAuthor = {
+          name: args.author,
+          id: uuid()
+        }
+        authors = authors.concat(newAuthor)
+      }
+
+      const newBook = {
+        title: args.title,
+        published: args.published,
+        genres: args.genres,
+        author: args.author,
+        id: uuid()
+      }
+      books = books.concat(newBook)
+      return newBook
     }
   }
 }
