@@ -1,60 +1,72 @@
-import { v4 as uuid } from 'uuid'
-import { authors, books } from './data.js'
+import Author from '../mongoose/models/author.js'
+import Book from '../mongoose/models/book.js'
 
 export const resolvers = {
   Query: {
-    bookCount: () => books.length,
-    authorCount: () => authors.length,
-    allBooks: (root, args) => {
+    bookCount: async () => await Book.countDocuments(),
+    authorCount: async () => await Author.countDocuments(),
+    allBooks: async (root, args) => {
+      const books = await Book.find({}).populate('author')
+      console.log('Books:', books)
+      if (!args.author && !args.genre) {
+        return books
+      }
+
       return books.filter(book => {
-        const authorMatch = !args.author || book.author === args.author
+        const authorMatch = !args.author || book.author.name === args.author
         const genreMatch = !args.genre || book.genres.includes(args.genre)
         return authorMatch && genreMatch
       })
     },
-    allAuthors: () => authors
+    allAuthors: async () => await Author.find({})
   },
   Author: {
-    numberOfBooks: (root) => {
+    numberOfBooks: async (root) => {
+      const books = await Book.find({})
       return books.filter(book => book.author === root.name).length
     }
   },
   Mutation: {
-    addBook: (root, args) => {
-      const existingBook = books.find(book => book.title === args.title && book.author === args.author)
+    addBook: async (root, args) => {
+      let author = null
+      const existingBook = await Book.findOne({ title: args.title })
       if (existingBook) {
         throw new Error('Book already exists')
       }
 
-      const authorExists = authors.some(author => author.name === args.author)
+      const authorExists = await Author.findOne({ name: args.author })
       if (!authorExists) {
-        const newAuthor = {
+        const newAuthor = new Author({
           name: args.author,
-          id: uuid()
-        }
-        authors = authors.concat(newAuthor)
+        })
+        author = await newAuthor.save()
+          .catch(error => {
+            throw new Error('Failed to create author: ' + error.message)
+          })
+      } else {
+        author = authorExists
       }
 
-      const newBook = {
+      const newBook = new Book({
         title: args.title,
         published: args.published,
         genres: args.genres,
-        author: args.author,
-        id: uuid()
-      }
-      books = books.concat(newBook)
-      return newBook
+        author: author.id
+      })
+      const bookSaved = await newBook.save(newBook)
+      return bookSaved.populate('author')
     },
-    editAuthor: (root, args) => {
-      const authorExists = authors.find(author => author.name === args.name)
+    editAuthor: async (root, args) => {
+      const authorExists = await Author.findOne({ name: args.name })
       if (!authorExists) return null
 
-      const updatedAuthor = {
-        ...authorExists,
-        born: args.setBornTo
-      }
-      authors = authors.map(author => author.name === args.name ? updatedAuthor : author)
-      return updatedAuthor
+      return Author.findOneAndUpdate(
+        { name: args.name },
+        { born: args.setBornTo },
+        { new: true, runValidators: true }
+      ).catch(error => {
+        throw new Error('Failed to update author: ' + error.message)
+      })
     }
   }
 }
