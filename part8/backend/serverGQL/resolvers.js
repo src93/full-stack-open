@@ -7,7 +7,6 @@ export const resolvers = {
     authorCount: async () => await Author.countDocuments(),
     allBooks: async (root, args) => {
       const books = await Book.find({}).populate('author')
-      console.log('Books:', books)
       if (!args.author && !args.genre) {
         return books
       }
@@ -22,8 +21,8 @@ export const resolvers = {
   },
   Author: {
     numberOfBooks: async (root) => {
-      const books = await Book.find({})
-      return books.filter(book => book.author === root.name).length
+      const books = await Book.find({}).populate('author')
+      return books.filter(book => book.author.name === root.name).length
     }
   },
   Mutation: {

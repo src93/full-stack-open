@@ -9,7 +9,10 @@ const NewBook = (props) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
   const [addBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS } ]
+    refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS } ],
+    onError: (error) => {
+      console.error('Error adding book:', error.cause.message)
+    }
   })
 
   if (!props.show) {
