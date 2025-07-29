@@ -6,8 +6,19 @@ const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS)
   const [name, setName] = useState('')
   const [born, setBorn] = useState('')
+  const [showError, setShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState(null)
   const [setBirthYear] = useMutation(SET_BIRTH_YEAR, {
-    refetchQueries: [{ query: ALL_AUTHORS }]
+    refetchQueries: [{ query: ALL_AUTHORS }],
+    onError: (error) => {
+      console.error('Error setting birth year:', error.cause.message)
+      setShowError(true)
+      setErrorMessage(error.cause.message)
+      setTimeout(() => {
+        setShowError(false)
+        setErrorMessage(null)
+      }, 5000)
+    }
   })
 
   if (!props.show) {
@@ -46,6 +57,13 @@ const Authors = (props) => {
         </tbody>
       </table>
       <h2>Set Birth Year</h2>
+      {showError && (
+        <div>
+          <p style={{ color: 'red' }}>
+            Error: {errorMessage}
+          </p>
+        </div>
+      )}
       <form onSubmit={submit}>
         <select defaultValue={name} onChange={({ target }) => setName(target.value)}>
           {result.data.allAuthors.map((a) => (

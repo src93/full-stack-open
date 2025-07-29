@@ -1,5 +1,6 @@
 import Author from '../mongoose/models/author.js'
 import Book from '../mongoose/models/book.js'
+import { GraphQLError } from 'graphql'
 
 export const resolvers = {
   Query: {
@@ -30,7 +31,23 @@ export const resolvers = {
       let author = null
       const existingBook = await Book.findOne({ title: args.title })
       if (existingBook) {
-        throw new Error('Book already exists')
+        throw new GraphQLError('Book already exists', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title,
+            message: 'Book already exists'
+          }
+        })
+      }
+
+      if (args.author.length <= 3) {
+        throw new GraphQLError('Author name must be longer than 3 characters', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.author,
+            message: 'Author name must be longer than 3 characters'
+          }
+        })
       }
 
       const authorExists = await Author.findOne({ name: args.author })
@@ -40,7 +57,13 @@ export const resolvers = {
         })
         author = await newAuthor.save()
           .catch(error => {
-            throw new Error('Failed to create author: ' + error.message)
+            throw new GraphQLError('Failed to save author: ' + error.message, {
+              extensions: {
+                code: 'INTERNAL_SERVER_ERROR',
+                invalidArgs: args.author,
+                message: 'Failed to save author'
+              }
+            })
           })
       } else {
         author = authorExists
@@ -57,14 +80,28 @@ export const resolvers = {
     },
     editAuthor: async (root, args) => {
       const authorExists = await Author.findOne({ name: args.name })
-      if (!authorExists) return null
+      if (!authorExists) {
+        throw new GraphQLError('Author not found', {
+          extensions: {
+            code: 'NOT_FOUND',
+            invalidArgs: args.name,
+            message: 'Author not found'
+          }
+        })
+      }
 
       return Author.findOneAndUpdate(
         { name: args.name },
         { born: args.setBornTo },
         { new: true, runValidators: true }
       ).catch(error => {
-        throw new Error('Failed to update author: ' + error.message)
+        throw new GraphQLError('Failed to update author: ' + error.message, {
+          extensions: {
+            code: 'INTERNAL_SERVER_ERROR',
+            invalidArgs: args.name,
+            message: 'Failed to update author'
+          }
+        })
       })
     }
   }

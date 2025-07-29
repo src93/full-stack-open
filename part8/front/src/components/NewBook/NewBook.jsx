@@ -8,10 +8,18 @@ const NewBook = (props) => {
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
+  const [showError, setShowError] = useState(false)
+  const [addBookError, setAddBookError] = useState(null)
   const [addBook] = useMutation(ADD_BOOK, {
     refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS } ],
     onError: (error) => {
       console.error('Error adding book:', error.cause.message)
+      setShowError(true)
+      setAddBookError(error.cause.message)
+      setTimeout(() => {
+        setShowError(false)
+        setAddBookError(null)
+      }, 5000)
     }
   })
 
@@ -38,6 +46,13 @@ const NewBook = (props) => {
 
   return (
     <div>
+      {showError && (
+        <div>
+          <p style={{ color: 'red' }}>
+            Error: {addBookError}
+          </p>
+        </div>
+      )}
       <form onSubmit={submit}>
         <div>
           title
