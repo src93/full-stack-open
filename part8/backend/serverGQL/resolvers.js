@@ -1,6 +1,9 @@
 import Author from '../mongoose/models/author.js'
 import Book from '../mongoose/models/book.js'
+import User from '../mongoose/models/user.js'
 import { GraphQLError } from 'graphql'
+import jwt from 'jsonwebtoken';
+import config from '../mongoose/config.js';
 
 export const resolvers = {
   Query: {
@@ -18,7 +21,18 @@ export const resolvers = {
         return authorMatch && genreMatch
       })
     },
-    allAuthors: async () => await Author.find({})
+    allAuthors: async () => await Author.find({}),
+    me: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError('Not authenticated', {
+          extensions: {
+            code: 'UNAUTHENTICATED',
+            message: 'You must be logged in to access this resource'
+          }
+        })
+      }
+      return context.currentUser
+    }
   },
   Author: {
     numberOfBooks: async (root) => {
@@ -27,7 +41,14 @@ export const resolvers = {
     }
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, { currentUser }) => {
+      if (!currentUser) {
+        throw new GraphQLError('not authenticated', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+      }
       let author = null
       const existingBook = await Book.findOne({ title: args.title })
       if (existingBook) {
@@ -78,7 +99,14 @@ export const resolvers = {
       const bookSaved = await newBook.save(newBook)
       return bookSaved.populate('author')
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, { currentUser }) => {
+      if (!currentUser) {
+        throw new GraphQLError('not authenticated', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          }
+        })
+      }
       const authorExists = await Author.findOne({ name: args.name })
       if (!authorExists) {
         throw new GraphQLError('Author not found', {
@@ -103,6 +131,62 @@ export const resolvers = {
           }
         })
       })
+    },
+    createUser: async (root, args) => {
+      const existingUser = await User.findOne({ username: args.username })
+      if (existingUser) {
+        throw new GraphQLError('Username already exists', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.username,
+            message: 'Username already exists'
+          }
+        })
+      }
+
+      const newUser = new User({
+        username: args.username,
+        favoriteGenre: args.favoriteGenre
+      })
+
+      return newUser.save()
+    },
+    login: async (root, args) => {
+      if (args.username.length < 3) {
+        throw new GraphQLError('Username must be at least 3 characters long', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.username,
+            message: 'Username must be at least 3 characters long'
+          }
+        })
+      }
+      if (args.password !== 'secret') {
+        throw new GraphQLError('Invalid password', {
+          extensions: {
+            code: 'UNAUTHENTICATED',
+            invalidArgs: args.password,
+            message: 'Invalid password'
+          }
+        })
+      }
+      const user = await User.findOne({ username: args.username })
+      if (!user) {
+        throw new GraphQLError('User not found', {
+          extensions: {
+            code: 'NOT_FOUND',
+            invalidArgs: args.username,
+            message: 'User not found'
+          }
+        })
+      }
+      const token = jwt.sign({
+          username: user.username,
+          id: user.id
+        },
+        config.JWT_SECRET
+      )
+      return { value: token }
     }
   }
 }
