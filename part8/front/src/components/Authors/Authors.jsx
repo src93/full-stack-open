@@ -22,7 +22,6 @@ const Authors = (props) => {
   })
 
   useEffect(() => {
-    console.log('Authors data:', result.data)
     if (result.data && result.data.allAuthors) {
       setName(result.data.allAuthors[0].name || '')
     }
