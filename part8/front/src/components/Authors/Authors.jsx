@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from '@apollo/client'
 import { ALL_AUTHORS, SET_BIRTH_YEAR } from '../../queries'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS)
@@ -20,6 +20,13 @@ const Authors = (props) => {
       }, 5000)
     }
   })
+
+  useEffect(() => {
+    console.log('Authors data:', result.data)
+    if (result.data && result.data.allAuthors) {
+      setName(result.data.allAuthors[0].name || '')
+    }
+  }, [result.data])
 
   if (!props.show) {
     return null
