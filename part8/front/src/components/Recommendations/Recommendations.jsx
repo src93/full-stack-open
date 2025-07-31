@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/client'
 import { GET_USER } from '../../queries'
-import { ALL_BOOKS } from '../../queries'
+import { BOOKS_BY_GENRE } from '../../queries'
 
 const Recommendations = ({ show }) => {
   const [genre, setGenre] = useState('')
   const { data: user, error: errorUser, loading: loadingUser } = useQuery(GET_USER)
-  const { data: booksData, error: errorBook, loading: loadingBook } = useQuery(ALL_BOOKS)
+  const { data: booksData, error: errorBook, loading: loadingBook } = useQuery(BOOKS_BY_GENRE, {
+    variables: { genre },
+    fetchPolicy: 'cache-and-network',
+    onError: (error) => {
+      console.error('Error fetching books:', error.message)
+    }
+  })
 
   useEffect(() => {
     if (user && user.me) {
@@ -41,7 +47,7 @@ const Recommendations = ({ show }) => {
             <th>Author</th>
             <th>Published</th>
           </tr>
-          {booksData.allBooks.filter(book => book.genres.includes(genre)).map(book => (
+          {booksData.booksByGenre.filter(book => book.genres.includes(genre)).map(book => (
             <tr key={book.title}>
               <td>{book.title}</td>
               <td>{book.author.name}</td>

@@ -32,6 +32,22 @@ export const resolvers = {
         })
       }
       return context.currentUser
+    },
+    booksByGenre: async (root, args) => {
+      if (!args.genre) {
+        const books = await Book.find({}).populate('author')
+        return books
+      }
+      const books = await Book.find({ genres: args.genre }).populate('author')
+      if (books.length === 0) {
+        throw new GraphQLError(`No books found for genre: ${args.genre}`, {
+          extensions: {
+            code: 'NOT_FOUND',
+            message: `No books found for genre: ${args.genre}`
+          }
+        })
+      }
+      return books
     }
   },
   Author: {

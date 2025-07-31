@@ -1,21 +1,27 @@
 import { useQuery } from '@apollo/client'
-import { ALL_BOOKS } from '../../queries'
+import { BOOKS_BY_GENRE } from '../../queries'
 import { useState, useEffect } from 'react'
 
 const Books = (props) => {
-  const result = useQuery(ALL_BOOKS)
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
+  const result = useQuery(BOOKS_BY_GENRE, {
+    variables: { genre },
+    fetchPolicy: 'cache-and-network',
+    onError: (error) => {
+      console.error('Error fetching books:', error.cause.result.errors[0].message)
+    }
+  })
 
   useEffect(() => {
-    if (result.data && result.data.allBooks) {
+    if (result.data && result.data.booksByGenre && !genres.length) {
       const allGenres = new Set()
-      result.data.allBooks.forEach(book => {
+      result.data.booksByGenre.forEach(book => {
         book.genres.forEach(genre => allGenres.add(genre))
       })
       setGenres(Array.from(allGenres))
     }
-  }, [result.data])
+  }, [result.data, genres])
 
   if (!props.show) {
     return null
@@ -42,7 +48,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {result.data.allBooks.filter((book) => genre ? book.genres.includes(genre) : true).map((a) => (
+          {result.data.booksByGenre.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
