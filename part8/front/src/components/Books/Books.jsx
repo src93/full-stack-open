@@ -1,10 +1,11 @@
 import { useQuery } from '@apollo/client'
-import { BOOKS_BY_GENRE } from '../../queries'
+import { BOOKS_BY_GENRE, ALL_BOOKS } from '../../queries'
 import { useState, useEffect } from 'react'
 
 const Books = (props) => {
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
+  const allBooksResult = useQuery(ALL_BOOKS)
   const result = useQuery(BOOKS_BY_GENRE, {
     variables: { genre },
     fetchPolicy: 'cache-and-network',
@@ -14,14 +15,14 @@ const Books = (props) => {
   })
 
   useEffect(() => {
-    if (result.data && result.data.booksByGenre && !genres.length) {
+    if (allBooksResult.data && allBooksResult.data.allBooks) {
       const allGenres = new Set()
-      result.data.booksByGenre.forEach(book => {
+      allBooksResult.data.allBooks.forEach(book => {
         book.genres.forEach(genre => allGenres.add(genre))
       })
       setGenres(Array.from(allGenres))
     }
-  }, [result.data, genres])
+  }, [allBooksResult])
 
   if (!props.show) {
     return null
