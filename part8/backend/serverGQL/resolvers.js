@@ -3,7 +3,12 @@ import Book from '../mongoose/models/book.js'
 import User from '../mongoose/models/user.js'
 import { GraphQLError } from 'graphql'
 import jwt from 'jsonwebtoken';
-import config from '../mongoose/config.js';
+import config from '../mongoose/config.js'
+import { PubSub } from 'graphql-subscriptions';
+
+const pubsub = new PubSub();
+
+console.log('resolvers.js loaded', pubsub)
 
 export const resolvers = {
   Query: {
@@ -112,8 +117,19 @@ export const resolvers = {
         genres: args.genres,
         author: author.id
       })
-      const bookSaved = await newBook.save(newBook)
-      return bookSaved.populate('author')
+      try {
+        await newBook.save(newBook)
+        pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
+      } catch (error) {
+        throw new GraphQLError('Failed to save book: ' + error.message, {
+          extensions: {
+            code: 'INTERNAL_SERVER_ERROR',
+            invalidArgs: args.title,
+            message: 'Failed to save book'
+          }
+        })
+      }
+      return (await newBook.save()).populate('author')
     },
     editAuthor: async (root, args, { currentUser }) => {
       if (!currentUser) {
@@ -203,6 +219,11 @@ export const resolvers = {
         config.JWT_SECRET
       )
       return { value: token }
+    }
+  },
+  Subscription: {
+    bookAdded: {
+      subscribe: () => pubsub.asyncIterableIterator(['BOOK_ADDED'])
     }
   }
 }
