@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from '@apollo/client'
-import { ALL_AUTHORS, SET_BIRTH_YEAR } from '../../queries'
+import { ALL_AUTHORS } from '../../server/glq/queries'
+import { SET_BIRTH_YEAR } from '../../server/glq/mutation'
 import { useState, useEffect } from 'react'
 
 const Authors = (props) => {

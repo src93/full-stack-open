@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/client'
-import { GET_USER } from '../../queries'
-import { BOOKS_BY_GENRE } from '../../queries'
+import { GET_USER, BOOKS_BY_GENRE } from '../../server/glq/queries'
 
 const Recommendations = ({ show }) => {
   const [genre, setGenre] = useState('')

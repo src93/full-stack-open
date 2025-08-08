@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
-import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS, BOOKS_BY_GENRE } from '../../queries'
+import { ADD_BOOK } from '../../server/glq/mutation'
+import { ALL_AUTHORS, ALL_BOOKS, BOOKS_BY_GENRE } from '../../server/glq/queries'
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')

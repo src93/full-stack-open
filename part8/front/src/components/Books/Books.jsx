@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client'
-import { BOOKS_BY_GENRE, ALL_BOOKS } from '../../queries'
+import { BOOKS_BY_GENRE } from '../../server/glq/queries'
+import { ALL_BOOKS } from '../../server/glq/queries'
 import { useState, useEffect } from 'react'
 
 const Books = (props) => {

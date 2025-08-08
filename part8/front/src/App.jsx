@@ -3,12 +3,21 @@ import Authors from './components/Authors/Authors'
 import Books from './components/Books/Books'
 import NewBook from './components/NewBook/NewBook'
 import Recommendations from './components/Recommendations/Recommendations'
-import { LOGIN } from './queries'
-import { useMutation, useApolloClient } from '@apollo/client'
-
+import { LOGIN } from './server/glq/mutation'
+import { useMutation, useApolloClient, useSubscription } from '@apollo/client'
+import { BOOK_ADDED } from './server/glq/subscriptions'
 
 const App = () => {
   const client = useApolloClient()
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const bookAdded = data.data.bookAdded
+      window.alert(`New book added: ${bookAdded.title} by ${bookAdded.author.name}`)
+    },
+    onError: (error) => {
+      console.error('Subscription error:', error.message)
+    }
+  })
   const [page, setPage] = useState('authors')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')

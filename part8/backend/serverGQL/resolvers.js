@@ -119,7 +119,7 @@ export const resolvers = {
       })
       try {
         await newBook.save(newBook)
-        pubsub.publish('BOOK_ADDED', { bookAdded: newBook })
+        pubsub.publish('BOOK_ADDED', { bookAdded: newBook.populate('author') })
       } catch (error) {
         throw new GraphQLError('Failed to save book: ' + error.message, {
           extensions: {
