@@ -7,7 +7,6 @@ const Recommendations = ({ show }) => {
   const { data: user, error: errorUser, loading: loadingUser } = useQuery(GET_USER)
   const { data: booksData, error: errorBook, loading: loadingBook } = useQuery(BOOKS_BY_GENRE, {
     variables: { genre },
-    fetchPolicy: 'cache-and-network',
     onError: (error) => {
       console.error('Error fetching books:', error.message)
     }

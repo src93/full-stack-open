@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMutation } from '@apollo/client'
 import { ADD_BOOK } from '../../server/glq/mutation'
-import { ALL_AUTHORS, ALL_BOOKS, BOOKS_BY_GENRE } from '../../server/glq/queries'
+import { ALL_AUTHORS, ALL_GENRES } from '../../server/glq/queries'
 
 const NewBook = (props) => {
   const [title, setTitle] = useState('')
@@ -12,7 +12,7 @@ const NewBook = (props) => {
   const [showError, setShowError] = useState(false)
   const [addBookError, setAddBookError] = useState(null)
   const [addBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }, { query: BOOKS_BY_GENRE } ],
+    refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_GENRES } ],
     onError: (error) => {
       console.error('Error adding book:', error.cause.message)
       setShowError(true)

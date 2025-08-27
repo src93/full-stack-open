@@ -22,7 +22,6 @@ const startServer = async () => {
 
           if (auth && auth.toLowerCase().startsWith('bearer ')) {
             const token = auth.substring(7)
-            console.log('token', token)
             try {
               const decodedToken = jwt.verify(token, config.JWT_SECRET)
               currentUser = await User.findById(decodedToken.id)

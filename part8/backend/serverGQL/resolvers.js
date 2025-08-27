@@ -53,6 +53,14 @@ export const resolvers = {
         })
       }
       return books
+    },
+    allGenres: async () => {
+      const books = await Book.find({})
+      const genres = new Set()
+      books.forEach(book => {
+        book.genres.forEach(genre => genres.add(genre))
+      })
+      return Array.from(genres)
     }
   },
   Author: {

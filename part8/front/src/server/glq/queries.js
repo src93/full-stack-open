@@ -37,3 +37,9 @@ export const BOOKS_BY_GENRE = gql`
   }
   ${BOOK_DETAILS}
 `
+
+export const ALL_GENRES = gql`
+  query {
+    allGenres
+  }
+`

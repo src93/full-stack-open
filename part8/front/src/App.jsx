@@ -6,12 +6,14 @@ import Recommendations from './components/Recommendations/Recommendations'
 import { LOGIN } from './server/glq/mutation'
 import { useMutation, useApolloClient, useSubscription } from '@apollo/client'
 import { BOOK_ADDED } from './server/glq/subscriptions'
+import { BOOKS_BY_GENRE } from './server/glq/queries'
 
 const App = () => {
   const client = useApolloClient()
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
       const bookAdded = data.data.bookAdded
+      updateCacheWith(bookAdded)
       window.alert(`New book added: ${bookAdded.title} by ${bookAdded.author.name}`)
     },
     onError: (error) => {
@@ -38,6 +40,34 @@ const App = () => {
       setPassword('')
     }
   }, [result.data])
+
+  const updateCacheWith = (addedBook) => {
+    const genresToUpdate = [...addedBook.genres, '']
+
+    // Actualizar para cada género del libro añadido
+    genresToUpdate.forEach(genre => {
+      try {
+        client.cache.updateQuery(
+          {
+            query: BOOKS_BY_GENRE,
+            variables: { genre: genre }
+          },
+          (data) => {
+            if (!data?.booksByGenre) return data
+
+            const bookExists = data.booksByGenre.find(book => book.title === addedBook.title)
+            if (bookExists) return data
+
+            return {
+              booksByGenre: [...data.booksByGenre, addedBook]
+            }
+          }
+        )
+      } catch (error) {
+        console.log(`No cache for genre: ${genre}`)
+      }
+    })
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault()

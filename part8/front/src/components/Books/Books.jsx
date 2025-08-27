@@ -1,35 +1,23 @@
 import { useQuery } from '@apollo/client'
 import { BOOKS_BY_GENRE } from '../../server/glq/queries'
-import { ALL_BOOKS } from '../../server/glq/queries'
-import { useState, useEffect } from 'react'
+import { ALL_GENRES } from '../../server/glq/queries'
+import { useState } from 'react'
 
 const Books = (props) => {
   const [genre, setGenre] = useState('')
-  const [genres, setGenres] = useState([])
-  const allBooksResult = useQuery(ALL_BOOKS)
+  const allGenresResult = useQuery(ALL_GENRES)
   const result = useQuery(BOOKS_BY_GENRE, {
     variables: { genre },
-    fetchPolicy: 'cache-and-network',
     onError: (error) => {
       console.error('Error fetching books:', error.cause.result.errors[0].message)
     }
   })
 
-  useEffect(() => {
-    if (allBooksResult.data && allBooksResult.data.allBooks) {
-      const allGenres = new Set()
-      allBooksResult.data.allBooks.forEach(book => {
-        book.genres.forEach(genre => allGenres.add(genre))
-      })
-      setGenres(Array.from(allGenres))
-    }
-  }, [allBooksResult])
-
   if (!props.show) {
     return null
   }
 
-  if (result.loading) {
+  if (result.loading || allGenresResult.loading) {
     return <div>loading...</div>
   }
 
@@ -59,7 +47,7 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
-      {genres.map((genre) => {
+      {allGenresResult.data.allGenres.map((genre) => {
         return (
           <button key={genre} onClick={() => setGenre(genre)}>{genre}</button>
         )

@@ -31,6 +31,7 @@ export const typeDefs = `
     allAuthors: [Author!]!
     me: User
     booksByGenre(genre: String): [Book!]!
+    allGenres: [String!]!
   }
 
   type Mutation {
