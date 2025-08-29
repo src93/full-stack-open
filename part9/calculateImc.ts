@@ -14,10 +14,9 @@ const imcRanges: ImcRange[] = [
 
 const calculateImc = (height: number, weight: number): ImcCategory => {
   const imc: number = weight / (height * height);
-  console.log(`IMC: ${imc}`);
 
   const range = imcRanges.find(range => imc < range.max);
   return range?.category || 'Obesity';
 };
 
-export { calculateImc };
+console.log(`IMC category: ${calculateImc(1.85, 80)}`);
