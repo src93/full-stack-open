@@ -19,4 +19,6 @@ const calculateImc = (height: number, weight: number): ImcCategory => {
   return range?.category || 'Obesity';
 };
 
-console.log(`IMC category: ${calculateImc(1.85, 80)}`);
+const [height, weight] = process.argv.slice(2).map(Number);
+
+console.log(`IMC category: ${calculateImc(height, weight)}`);
