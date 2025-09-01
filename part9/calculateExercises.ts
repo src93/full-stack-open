@@ -8,7 +8,7 @@ interface ExercisesResult {
   average: number
 }
 
-const calculateExercises = (hoursDay: number[], target: number): ExercisesResult => {
+export const calculateExercises = (hoursDay: number[], target: number): ExercisesResult => {
   if (hoursDay.length === 0 || target === undefined) {
     throw new Error('No exercise data provided');
   }
@@ -33,14 +33,3 @@ const calculateExercises = (hoursDay: number[], target: number): ExercisesResult
     average
   };
 };
-
-const [target, ...hoursDay] = process.argv.slice(2).map(Number);
-try {
-  console.log(calculateExercises(hoursDay, target));
-} catch (error: unknown) {
-  let errorMessage = 'Something bad happened.';
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
-  }
-  console.log(errorMessage);
-}
