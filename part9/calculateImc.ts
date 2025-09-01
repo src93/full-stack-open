@@ -12,13 +12,9 @@ const imcRanges: ImcRange[] = [
   { max: Infinity, category: 'Obesity' }
 ];
 
-const calculateImc = (height: number, weight: number): ImcCategory => {
+export const calculateImc = (height: number, weight: number): ImcCategory => {
   const imc: number = weight / (height * height);
 
   const range = imcRanges.find(range => imc < range.max);
   return range?.category || 'Obesity';
 };
-
-const [height, weight] = process.argv.slice(2).map(Number);
-
-console.log(`IMC category: ${calculateImc(height, weight)}`);
