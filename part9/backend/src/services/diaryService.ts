@@ -31,6 +31,7 @@ const addDiary = ( entry: NewDiaryEntry ): DiaryEntry => {
   };
 
   diaries.push(newDiaryEntry);
+  console.log('diaries:', diaries)
   return newDiaryEntry;
 };
 

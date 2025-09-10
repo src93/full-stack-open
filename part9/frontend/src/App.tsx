@@ -1,8 +1,12 @@
 import ContentDiary from './components/ContentDiary/ContentDiary'
+import FormNewEntry from './components/FormNewEntry/FormNewEntry'
 
 const App = () => {
   return (
-    <ContentDiary />
+    <>
+      <FormNewEntry />
+      <ContentDiary />
+    </>
   );
 };
 
