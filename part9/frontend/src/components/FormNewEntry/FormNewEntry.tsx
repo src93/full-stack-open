@@ -1,12 +1,18 @@
 import { useState } from 'react'
 import type { NewDiaryEntry, Visibility, Weather } from '../../interfaces/interfaces'
 import { createNewEntry } from '../../services/diaries'
+import type { NotificationType } from '../../interfaces/interfaces'
+import Notification from '../Notification/Notification'
+import axios from 'axios'
 
 const FormNewEntry = () => {
   const [date, setDate] = useState('')
   const [visibility, setVisibility] = useState('')
   const [weather, setWeather] = useState('')
   const [comment, setComment] = useState('')
+  const [showNotification, setShowNotification] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [typeMessage, setTypeMessage] = useState<NotificationType>('info')
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault()
@@ -16,10 +22,8 @@ const FormNewEntry = () => {
       weather: weather as Weather,
       comment: comment
     }
-    console.log(newEntry)
     createNewEntry(newEntry)
-      .then(returnedEntry => {
-        console.log('entry added', returnedEntry)
+      .then(() => {
         setDate('')
         setVisibility('')
         setWeather('')
@@ -27,12 +31,30 @@ const FormNewEntry = () => {
       })
       .catch(error => {
         console.error('Error adding entry:', error)
+        if (axios.isAxiosError(error)) {
+          setErrorMessage(error.response?.data || 'Unknown axios error')
+          setTypeMessage('error')
+          setShowNotification(true)
+          setTimeout(() => {
+            setShowNotification(false)
+            setErrorMessage('')
+          }, 5000)
+        } else {
+          setErrorMessage('Unknown error')
+          setTypeMessage('error')
+          setShowNotification(true)
+          setTimeout(() => {
+            setShowNotification(false)
+            setErrorMessage('')
+          }, 5000)
+        }
       })
   }
 
   return (
     <div>
       <h2>Add new entry</h2>
+      {showNotification && <Notification message={errorMessage} type={typeMessage} />}
       <form onSubmit={handleSubmit}>
         <div>
           date

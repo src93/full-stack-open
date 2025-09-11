@@ -11,3 +11,5 @@ export type Weather = 'sunny' | 'rainy' | 'cloudy' | 'windy' | 'stormy';
 export type Visibility = 'great' | 'good' | 'ok' | 'poor';
 
 export type NewDiaryEntry = Omit<DiaryEntry, 'id'>;
+
+export type NotificationType = 'error' | 'info'
