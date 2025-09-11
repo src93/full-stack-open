@@ -66,16 +66,62 @@ const FormNewEntry = () => {
         <div>
           visibility
           <input
-            type="text"
-            value={visibility}
-            onChange={(e) => setVisibility(e.target.value)} />
+            type='radio'
+            name='visibility'
+            value='great'
+            checked={visibility === 'great'}
+            onChange={(e) => setVisibility(e.target.value)} /> great
+          <input
+            type='radio'
+            name='visibility'
+            value='good'
+            checked={visibility === 'good'}
+            onChange={(e) => setVisibility(e.target.value)} /> good
+          <input
+            type='radio'
+            name='visibility'
+            value='ok'
+            checked={visibility === 'ok'}
+            onChange={(e) => setVisibility(e.target.value)} /> ok
+          <input
+            type='radio'
+            name='visibility'
+            value='poor'
+            checked={visibility === 'poor'}
+            onChange={(e) => setVisibility(e.target.value)} /> poor
         </div>
         <div>
           weather
           <input
-            type="text"
-            value={weather}
-            onChange={(e) => setWeather(e.target.value)} />
+            type='radio'
+            name='weather'
+            value='sunny'
+            checked={weather === 'sunny'}
+            onChange={(e) => setWeather(e.target.value)} /> sunny
+          <input
+            type='radio'
+            name='weather'
+            value='rainy'
+            checked={weather === 'rainy'}
+            onChange={(e) => setWeather(e.target.value)} /> rainy
+          <input
+            type='radio'
+            name='weather'
+            value='cloudy'
+            checked={weather === 'cloudy'}
+            onChange={(e) => setWeather(e.target.value)} /> cloudy
+          <input
+            type='radio'
+            name='weather'
+            value='windy'
+            checked={weather === 'windy'}
+            onChange={(e) => setWeather(e.target.value)} /> windy
+          <input
+            type='radio'
+            name='weather'
+            value='stormy'
+            checked={weather === 'stormy'}
+            onChange={(e) => setWeather(e.target.value)} /> stormy
         </div>
         <div>
           comment
