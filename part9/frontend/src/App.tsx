@@ -1,12 +1,15 @@
-import ContentDiary from './components/ContentDiary/ContentDiary'
-import FormNewEntry from './components/FormNewEntry/FormNewEntry'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { Patients } from "./components/Patients/Patients";
+import { Patient } from './components/Patient/Patient';
 
 const App = () => {
   return (
-    <>
-      <FormNewEntry />
-      <ContentDiary />
-    </>
+    <Router>
+      <Routes>
+        <Route path='/' element={ <Patients /> } />
+        <Route path='/patient/:id' element={ <Patient /> } />
+      </Routes>
+    </Router>
   );
 };
 

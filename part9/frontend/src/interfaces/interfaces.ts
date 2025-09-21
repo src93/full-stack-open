@@ -1,15 +1,13 @@
-export interface DiaryEntry {
-  id: number;
-  date: string;
-  weather: Weather;
-  visibility: Visibility;
-  comment: string;
+export interface PatientEntry {
+  id: string;
+  name: string;
+  dateOfBirth: string;
+  gender: Gender;
+  occupation: string;
+  entries: Entry[];
 }
 
-export type Weather = 'sunny' | 'rainy' | 'cloudy' | 'windy' | 'stormy';
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface Entry {}
 
-export type Visibility = 'great' | 'good' | 'ok' | 'poor';
-
-export type NewDiaryEntry = Omit<DiaryEntry, 'id'>;
-
-export type NotificationType = 'error' | 'info'
+export type Gender = 'male' | 'female' | 'other';
