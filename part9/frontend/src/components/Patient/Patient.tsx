@@ -9,6 +9,7 @@ const emptyPatient: PatientEntry = {
   dateOfBirth: '',
   occupation: '',
   gender: 'other',
+  ssn: '',
   entries: []
 }
 
@@ -32,11 +33,23 @@ export const Patient = () => {
   return (
     <div>
       <h1>Patientor</h1>
+      <Link to={'/'}>Home</Link>
       <h2>{patient.name}</h2>
       <p>occupation: {patient.occupation}</p>
       <p>gender: {patient.gender}</p>
       <p>date of birth: {patient.dateOfBirth}</p>
-      <Link to={'/'}>Home</Link>
+      <h3>entries</h3>
+      {!patient.entries.length ? (
+        <p>No entries</p>
+      ) : (
+        patient.entries.map((entry) => (
+          <div key={entry.id} style={{ border: '1px solid black', marginBottom: '10px', padding: '5px' }}>
+            <p>{entry.date}</p>
+            <p>{entry.description}</p>
+            <p>diagnosis codes: {entry.diagnosisCodes ? entry.diagnosisCodes.join(', ') : 'N/A'}</p>
+          </div>
+        )
+      ))}
     </div>
   );
 }
