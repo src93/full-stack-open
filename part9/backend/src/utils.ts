@@ -1,4 +1,4 @@
-import { GenderEnum, Gender, NewPatientEntry, Entry } from './types/patients';
+import { GenderEnum, Gender, NewPatientEntry, Entry, TypePatient } from './types/patients';
 
 export const toNewPatientEntry = (object: unknown) => {
   if (!object || typeof object !== 'object') {
@@ -66,10 +66,19 @@ const parseOccupation = (occupation: unknown): string => {
 }
 
 const parseEntries = (entries: unknown): Entry[] => {
-  if (!entries || !Array.isArray(entries)) {
+  if (!entries || !Array.isArray(entries) || !entries.every(e => isEntry(e))) {
     throw new Error('Incorrect or missing entries');
   }
+
   return entries;
+}
+
+const isEntry = (entry: unknown): entry is Entry => {
+  return typeof entry === 'object' && entry !== null && 'type' in entry && isString(entry.type) && isEntryType(entry.type);
+}
+
+const isEntryType = (type: string): type is TypePatient => {
+  return Object.values(TypePatient).map(t => t.toString()).includes(type);
 }
 
 const isGender = (gender: string): gender is Gender => {
