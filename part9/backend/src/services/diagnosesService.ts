@@ -5,6 +5,12 @@ const getAllDiagnoses = (): DiagnosesEntry[] => {
   return data;
 };
 
+const addDiagnosis = (newDiagnosis: DiagnosesEntry): DiagnosesEntry => {
+  data.push(newDiagnosis);
+  return newDiagnosis;
+}
+
 export {
-  getAllDiagnoses
+  getAllDiagnoses,
+  addDiagnosis
 };

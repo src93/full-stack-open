@@ -1,7 +1,8 @@
-import type { PatientEntry } from '../../interfaces/interfaces'
+import type { PatientEntry, DiagnosesEntry } from '../../interfaces/interfaces'
 import { Link, useMatch } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { getPatientById } from '../../services/patients'
+import { getAllDiagnoses } from '../../services/diagnoses'
 
 const emptyPatient: PatientEntry = {
   id: '',
@@ -15,14 +16,22 @@ const emptyPatient: PatientEntry = {
 
 export const Patient = () => {
   const match = useMatch('/patient/:id')
+  const [diagnoses, setDiagnoses] = useState<DiagnosesEntry[]>([])
   const [patient, setPatient] = useState<PatientEntry>(emptyPatient)
   const id = match?.params.id
+  const descriptionDiagnsis = (code: string): string => {
+    const diagnosis = diagnoses.find(d => d.code === code)
+    return diagnosis ? diagnosis.name : 'Unknown diagnosis'
+  }
 
   useEffect(() => {
     if (id) {
       getPatientById(id)
         .then((data) => setPatient(data))
         .catch((e) => console.error(e))
+      getAllDiagnoses()
+      .then((data) => setDiagnoses(data))
+      .catch((e) => console.error(e))
     }
   }, [id])
 
@@ -46,7 +55,11 @@ export const Patient = () => {
           <div key={entry.id} style={{ border: '1px solid black', marginBottom: '10px', padding: '5px' }}>
             <p>{entry.date}</p>
             <p>{entry.description}</p>
-            <p>diagnosis codes: {entry.diagnosisCodes ? entry.diagnosisCodes.join(', ') : 'N/A'}</p>
+            <ul>
+              {entry.diagnosisCodes?.map(code => (
+                <li key={code}>{code}: {descriptionDiagnsis(code)}</li>
+              ))}
+            </ul>
           </div>
         )
       ))}
