@@ -1,8 +1,12 @@
-import type { PatientEntry, DiagnosesEntry } from '../../interfaces/interfaces'
+import type { PatientEntry, DiagnosesEntry, Entry } from '../../interfaces/interfaces'
 import { Link, useMatch } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { getPatientById } from '../../services/patients'
 import { getAllDiagnoses } from '../../services/diagnoses'
+
+import { HealthCheck } from '../HealthCheck/HealthCheck'
+import { Hospital } from '../Hospital/Hospital'
+import { OcupationalHealthcare } from '../OccupationalHealthcare/OccupationalHealthcare'
 
 const emptyPatient: PatientEntry = {
   id: '',
@@ -22,6 +26,23 @@ export const Patient = () => {
   const descriptionDiagnsis = (code: string): string => {
     const diagnosis = diagnoses.find(d => d.code === code)
     return diagnosis ? diagnosis.name : 'Unknown diagnosis'
+  }
+  const assertNever = (value: never): never => {
+    throw new Error(
+      `Unhandled discriminated union member: ${JSON.stringify(value)}`
+    );
+  };
+  const EntryDetails = (entry: Entry) => {
+    switch (entry.type) {
+      case 'HealthCheck':
+        return <HealthCheck entry={entry} />
+      case 'Hospital':
+        return <Hospital entry={entry} />
+      case 'OccupationalHealthcare':
+        return <OcupationalHealthcare entry={entry} />
+      default:
+        return assertNever(entry)
+    }
   }
 
   useEffect(() => {
@@ -53,8 +74,7 @@ export const Patient = () => {
       ) : (
         patient.entries.map((entry) => (
           <div key={entry.id} style={{ border: '1px solid black', marginBottom: '10px', padding: '5px' }}>
-            <p>{entry.date}</p>
-            <p>{entry.description}</p>
+            {EntryDetails(entry)}
             <ul>
               {entry.diagnosisCodes?.map(code => (
                 <li key={code}>{code}: {descriptionDiagnsis(code)}</li>
