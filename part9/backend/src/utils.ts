@@ -1,4 +1,4 @@
-import { GenderEnum, Gender, NewPatientEntry, Entry, TypePatient } from './types/patients';
+import { GenderEnum, Gender, NewPatientEntry, Entry, TypePatient, HealthCheckRating } from './types/patients';
 
 export const toNewPatientEntry = (object: unknown) => {
   if (!object || typeof object !== 'object') {
@@ -24,7 +24,7 @@ export const toNewEntry = (object: unknown): Entry => {
     throw new Error('Incorrect or missing data');
   }
 
-  if (!isEntry(object)) {
+  if (!parseEntry(object)) {
     throw new Error('Incorrect data: some fields are missing or invalid');
   }
 
@@ -78,15 +78,15 @@ const parseOccupation = (occupation: unknown): string => {
 }
 
 const parseEntries = (entries: unknown): Entry[] => {
-  if (!entries || !Array.isArray(entries) || !entries.every(e => isEntry(e))) {
+  if (!entries || !Array.isArray(entries) || !entries.every(e => parseEntry(e))) {
     throw new Error('Incorrect or missing entries');
   }
 
   return entries;
 }
 
-const isEntry = (entry: unknown): entry is Entry => {
-  if (!isHealthCheckEntry(entry) && !isHospitalEntry(entry) && !isOccupationalHealthcareEntry(entry)) {
+const parseEntry = (entry: unknown): entry is Entry => {
+  if (!parseHealthCheckEntry(entry) && !parseHospitalEntry(entry) && !parseOccupationalHealthcareEntry(entry)) {
     throw new Error('Incorrect or missing entries');
   }
 
@@ -95,27 +95,74 @@ const isEntry = (entry: unknown): entry is Entry => {
 
 const isEntryBase = (entry: unknown): entry is { id: unknown; date: unknown; specialist: unknown; description: unknown; diagnosisCodes?: unknown } => {
   return typeof entry === 'object' && entry !== null &&
-    'date' in entry && 'specialist' in entry && 'description' in entry &&
-    ( !('diagnosisCodes' in entry) || Array.isArray(entry.diagnosisCodes) );
+    isDateEntry(entry) && isSpecialist(entry) && isDescription(entry) &&
+    isDiagnosisCodes(entry);
 }
 
-const isHealthCheckEntry = (entry: unknown): entry is Entry => {
-  return isEntryBase(entry) && 'type' in entry && entry.type === TypePatient.HealthCheck &&
-    'healthCheckRating' in entry && typeof entry.healthCheckRating === 'number';
+const isDateEntry = (entry: object): boolean => {
+  return 'date' in entry && isString(entry.date) && isDate(entry.date);
 }
 
-const isHospitalEntry = (entry: unknown): entry is Entry => {
-  return isEntryBase(entry) && 'type' in entry && entry.type === TypePatient.Hospital &&
-    'discharge' in entry && typeof entry.discharge === 'object' &&
-    entry.discharge !== null && 'date' in entry.discharge && 'criteria' in entry.discharge &&
-    typeof entry.discharge.date === 'string' && typeof entry.discharge.criteria === 'string';
+const isSpecialist = (entry: object): boolean => {
+  return 'specialist' in entry && isString(entry.specialist) && entry.specialist !== '';
 }
 
-const isOccupationalHealthcareEntry = (entry: unknown): entry is Entry => {
-  return isEntryBase(entry) && 'type' in entry &&
-    entry.type === TypePatient.OccupationalHealthcare && 'employerName' in entry &&
-      typeof entry.employerName === 'string' &&
-      ( !('sickLeave' in entry) || ( typeof entry.sickLeave === 'object' && entry.sickLeave !== null && 'startDate' in entry.sickLeave && 'endDate' in entry.sickLeave && typeof entry.sickLeave.startDate === 'string' && typeof entry.sickLeave.endDate === 'string' ) );
+const isDescription = (entry: object): boolean => {
+  return 'description' in entry && isString(entry.description) && entry.description !== '';
+}
+
+const isDiagnosisCodes = (entry: object): boolean => {
+  return 'diagnosisCodes' in entry && Array.isArray(entry.diagnosisCodes);
+}
+
+const parseHealthCheckEntry = (entry: unknown): entry is Entry => {
+  return isEntryBase(entry) && isHealCheckType(entry) && ishealthCheckRating(entry);
+}
+
+const isHealCheckType = (entry: object): boolean => {
+  return 'type' in entry && entry.type === TypePatient.HealthCheck;
+}
+
+const ishealthCheckRating = (entry: object): boolean => {
+  return 'healthCheckRating' in entry && typeof entry.healthCheckRating === 'number' && Object.values(HealthCheckRating).map(t => t as number).includes(entry.healthCheckRating);
+}
+
+const parseHospitalEntry = (entry: unknown): entry is Entry => {
+  return isEntryBase(entry) && isHospitalType(entry) &&
+    'discharge' in entry && typeof entry.discharge === 'object' && isDischarge(entry);
+}
+
+const isHospitalType = (entry: object): boolean => {
+  return 'type' in entry && entry.type === TypePatient.Hospital;
+}
+
+const isDischarge = (entry: object): boolean => {
+  return 'discharge' in entry && typeof entry.discharge === 'object' &&
+    entry.discharge !== null && isDateEntry(entry.discharge) && isCriteria(entry.discharge);
+}
+
+const isCriteria = (discharge: object): boolean => {
+  return 'criteria' in discharge && isString(discharge.criteria) && discharge.criteria !== '';
+}
+
+const parseOccupationalHealthcareEntry = (entry: unknown): entry is Entry => {
+  return isEntryBase(entry) && isOccupationalHealthcareType(entry) && isEmployerName(entry) &&
+      isSickLeave(entry);
+}
+
+const isOccupationalHealthcareType = (entry: object): boolean => {
+  return 'type' in entry && entry.type === TypePatient.OccupationalHealthcare;
+}
+
+const isEmployerName = (entry: object): boolean => {
+  return 'employerName' in entry && isString(entry.employerName) && entry.employerName !== '';
+}
+
+const isSickLeave = (entry: object): boolean => {
+  return 'sickLeave' in entry && typeof entry.sickLeave === 'object' &&
+    entry.sickLeave !== null && 'startDate' in entry.sickLeave && 'endDate' in entry.sickLeave &&
+    isString(entry.sickLeave.startDate) && isString(entry.sickLeave.endDate) &&
+    isDate(entry.sickLeave.startDate) && isDate(entry.sickLeave.endDate);
 }
 
 const isGender = (gender: string): gender is Gender => {

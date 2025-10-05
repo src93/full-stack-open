@@ -1,4 +1,4 @@
-import type { PatientEntry, DiagnosesEntry, Entry } from '../../interfaces/interfaces'
+import type { PatientEntry, DiagnosesEntry, Entry, NewEntry } from '../../interfaces/interfaces'
 import { Link, useMatch } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { getPatientById } from '../../services/patients'
@@ -7,6 +7,12 @@ import { getAllDiagnoses } from '../../services/diagnoses'
 import { HealthCheck } from '../HealthCheck/HealthCheck'
 import { Hospital } from '../Hospital/Hospital'
 import { OcupationalHealthcare } from '../OccupationalHealthcare/OccupationalHealthcare'
+
+import { FormNewEntry } from '../FormNewEntry/FormNewEntry'
+
+import axios from 'axios'
+
+import { addEntry } from '../../services/entries'
 
 const emptyPatient: PatientEntry = {
   id: '',
@@ -22,6 +28,7 @@ export const Patient = () => {
   const match = useMatch('/patient/:id')
   const [diagnoses, setDiagnoses] = useState<DiagnosesEntry[]>([])
   const [patient, setPatient] = useState<PatientEntry>(emptyPatient)
+  const [error, setError] = useState<string>('')
   const id = match?.params.id
   const descriptionDiagnsis = (code: string): string => {
     const diagnosis = diagnoses.find(d => d.code === code)
@@ -56,6 +63,34 @@ export const Patient = () => {
     }
   }, [id])
 
+  const handleSubmit = async (newEntry: NewEntry) => {
+    try {
+      const entryAdded: Entry = await addEntry(patient.id, newEntry)
+      setPatient({...patient, entries: patient.entries.concat(entryAdded)})
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        if (error?.response?.data && typeof error?.response?.data === 'string') {
+          const message = error.response.data.replace('Something went wrong. Error: ', '');
+          console.error(message);
+          setError(message);
+          setTimeout(() => {
+            setError('');
+          }, 5000);
+        } else {
+          setError('Unrecognized axios error');
+          setTimeout(() => {
+            setError('');
+          }, 5000);
+        }
+      } else {
+        setError('Unknown error');
+        setTimeout(() => {
+          setError('');
+        }, 5000);
+      }
+    }
+  }
+
   if (patient.id === '') {
     return <div>Loading...</div>
   }
@@ -68,6 +103,8 @@ export const Patient = () => {
       <p>occupation: {patient.occupation}</p>
       <p>gender: {patient.gender}</p>
       <p>date of birth: {patient.dateOfBirth}</p>
+      <FormNewEntry handleSubmit={handleSubmit} />
+      {error && <div style={{ color: 'red' }}>{error}</div>}
       <h3>entries</h3>
       {!patient.entries.length ? (
         <p>No entries</p>
